@@ -14,8 +14,8 @@ class _HomeVisitorComponentState extends State<HomeVisitorComponent> {
   Widget build(BuildContext context) {
     return Container(
       child: ElevatedButton(
-        child: Text("Navigate About"),
-        onPressed: (){
+        child: const Text("Navigate About"),
+        onPressed: () {
           SingelPageRoute.pushName(routeAbout);
         },
       ),
