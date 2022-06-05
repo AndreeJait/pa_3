@@ -38,7 +38,6 @@ class _MasterHomePageVisitorState extends State<MasterHomePageVisitor> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     SingelPageRoute.clearHistory();
     _subscription.cancel();

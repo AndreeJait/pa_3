@@ -12,7 +12,7 @@ var bottomNavigators = [
       icon: const FaIcon(
         FontAwesomeIcons.house,
         size: 18,
-        color: Colors.black87,
+        color: Colors.black26,
       )),
   BottomNavigatorModel(
       name: "About",
@@ -20,6 +20,6 @@ var bottomNavigators = [
       icon: const FaIcon(
         FontAwesomeIcons.circleExclamation,
         size: 18,
-        color: Colors.black87,
+        color: Colors.black26,
       )),
 ];
