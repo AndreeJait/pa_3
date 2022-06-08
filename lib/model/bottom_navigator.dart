@@ -19,14 +19,14 @@ class BottomNavigatorModel {
       icon = FaIcon(
         icon.icon,
         size: icon.size,
-        color: Colors.black26,
+        color: Colors.black87,
       );
     } else {
       isActive = false;
       icon = FaIcon(
         icon.icon,
         size: icon.size,
-        color: Colors.black87,
+        color: Colors.black26,
       );
     }
   }

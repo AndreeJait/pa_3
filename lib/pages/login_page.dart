@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pa_3/constans/general_router_constant.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -135,7 +136,9 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         const Text('Create your account'),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushNamed(context, routeRegister);
+                          },
                           child: const Text('here'),
                         )
                       ],

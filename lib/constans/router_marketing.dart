@@ -3,25 +3,18 @@ import 'package:pa_3/model/bottom_navigator.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 const routeHome = "HOME";
-const routeAbout = "ABOUT";
-const routePurchase = "PURCHASE";
 const routeProfile = "PROFILE";
+const routeAbout = "ABOUT";
+const routeOrder = "ORDER";
+const routeOrdered = "ORDER_ORDERED";
+const routeHistory = "ORDER_HISTORY";
 
 var bottomNavigators = [
   BottomNavigatorModel(
-    name: "Home",
+    name: "Orders",
     initial: routeHome,
     icon: const FaIcon(
-      FontAwesomeIcons.house,
-      size: 18,
-      color: Colors.black87,
-    ),
-  ),
-  BottomNavigatorModel(
-    name: "Purchases",
-    initial: routePurchase,
-    icon: const FaIcon(
-      FontAwesomeIcons.store,
+      FontAwesomeIcons.box,
       size: 18,
       color: Colors.black87,
     ),
@@ -30,7 +23,7 @@ var bottomNavigators = [
     name: "About",
     initial: routeAbout,
     icon: const FaIcon(
-      FontAwesomeIcons.circleExclamation,
+      FontAwesomeIcons.fileLines,
       size: 18,
       color: Colors.black87,
     ),

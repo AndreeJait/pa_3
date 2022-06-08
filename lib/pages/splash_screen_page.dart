@@ -36,7 +36,7 @@ class SplashScreen extends StatelessWidget {
               ),
               ElevatedButton(
                 child: const Text("Navigate"),
-                onPressed: () => {Navigator.pushNamed(context, routeVisitor)},
+                onPressed: () => {Navigator.pushNamed(context, routeMarketing)},
               ),
             ],
           ),

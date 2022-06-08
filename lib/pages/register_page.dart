@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pa_3/constans/general_router_constant.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -66,7 +67,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     Container(
                       alignment: Alignment.center,
                       child: const Text(
-                        "Login",
+                        "Register",
                         style: TextStyle(
                             color: Color(0xff585858),
                             fontWeight: FontWeight.w400,
@@ -183,7 +184,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             }
                           },
                           child: const Text(
-                            'Login',
+                            'REGISTER',
                             style: TextStyle(color: Colors.white, fontSize: 18),
                           ),
                         ),
@@ -194,7 +195,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       children: [
                         const Text('Already have an account?'),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushNamed(context, routeLogin);
+                          },
                           child: const Text('Login'),
                         )
                       ],
