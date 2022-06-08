@@ -2,35 +2,40 @@ import 'package:flutter/material.dart';
 import 'package:pa_3/model/bottom_navigator.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-const routeHome = "HOME";
-const routeAbout = "ABOUT";
-const routePurchase = "PURCHASE";
 const routeProfile = "PROFILE";
+const routePurchase = "PURCHASES";
+const routeProduct = "PRODUCT";
+const routeHistory = "HISTORY";
+const routeOrder = "PRODUCT_ORDER";
+const routePayment = "PRODUCT_PAYMENT";
+const routeShipment = "PRODUCT_SHIPMENT";
+const routeSutar = "PRODUCT_SUTAR";
+const routeMozzataru = "PRODUCT_MOZZATARU";
 
 var bottomNavigators = [
   BottomNavigatorModel(
-    name: "Home",
-    initial: routeHome,
+    name: "Products",
+    initial: routeProduct,
     icon: const FaIcon(
-      FontAwesomeIcons.house,
+      FontAwesomeIcons.bottleWater,
       size: 18,
       color: Colors.black87,
     ),
   ),
   BottomNavigatorModel(
-    name: "Purchases",
+    name: "Purchase",
     initial: routePurchase,
     icon: const FaIcon(
-      FontAwesomeIcons.store,
+      FontAwesomeIcons.boxesPacking,
       size: 18,
       color: Colors.black87,
     ),
   ),
   BottomNavigatorModel(
-    name: "About",
-    initial: routeAbout,
+    name: "History",
+    initial: routeHistory,
     icon: const FaIcon(
-      FontAwesomeIcons.circleExclamation,
+      FontAwesomeIcons.fileLines,
       size: 18,
       color: Colors.black87,
     ),
