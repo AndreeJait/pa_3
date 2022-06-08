@@ -2,19 +2,20 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:singel_page_route/singel_page_route.dart';
-import 'package:pa_3/router/singel_visitor_router.dart';
+import 'package:pa_3/router/singel_marketing_router.dart';
 import 'package:pa_3/component/bottom_navigator.dart';
-import 'package:pa_3/constans/router_visitor.dart';
+import 'package:pa_3/constans/router_marketing.dart';
 import 'package:pa_3/model/bottom_navigator.dart';
 
-class MasterHomePageVisitor extends StatefulWidget {
-  const MasterHomePageVisitor({Key? key}) : super(key: key);
+class MasterHomePageMarketing extends StatefulWidget {
+  const MasterHomePageMarketing({Key? key}) : super(key: key);
 
   @override
-  State<MasterHomePageVisitor> createState() => _MasterHomePageVisitorState();
+  State<MasterHomePageMarketing> createState() =>
+      _MasterHomePageMarketingState();
 }
 
-class _MasterHomePageVisitorState extends State<MasterHomePageVisitor> {
+class _MasterHomePageMarketingState extends State<MasterHomePageMarketing> {
   late Widget view;
   late StreamSubscription _subscription;
   List<BottomNavigatorModel> navigator = [...bottomNavigators];
