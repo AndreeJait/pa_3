@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pa_3/component/admin/OrderComponent/card_order.dart';
 import 'package:pa_3/component/admin/OrderComponent/tabbar_custom.dart';
-import 'package:pa_3/model/order.dart';
+import 'package:pa_3/model/_order.dart';
 import 'package:pa_3/model/product.dart';
 import 'package:pa_3/model/user.dart';
 
