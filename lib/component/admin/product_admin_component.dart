@@ -47,11 +47,11 @@ class _ProductAdminComponentState extends State<ProductAdminComponent> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+        Column(
+          children: [
+            Wrap(
+              direction: Axis.horizontal,
+              spacing: 20,
               children: [
                 ElevatedButton(
                     onPressed: () {},
@@ -77,27 +77,64 @@ class _ProductAdminComponentState extends State<ProductAdminComponent> {
                         )
                       ],
                     )),
-                Container(
-                  margin: const EdgeInsets.only(
-                    top: 20,
-                  ),
+                ElevatedButton(
+                    onPressed: () {},
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.blue[300]),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18.0),
+                        ))),
+                    child: Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 10,
+                      children: const [
+                        Text(
+                          "Tambah Stok Produk",
+                          style: TextStyle(fontSize: 13),
+                        ),
+                        FaIcon(
+                          FontAwesomeIcons.plus,
+                          size: 15,
+                        )
+                      ],
+                    ))
+              ],
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Wrap(
-                        runSpacing: 20,
-                        children: [
-                          ...products.map((e) => CardProduct(
-                                product: e,
-                                changeVisible: changeVisibleModal,
-                              ))
-                        ],
+                      Container(
+                        margin: const EdgeInsets.only(
+                          top: 20,
+                        ),
+                        child: Column(
+                          children: [
+                            Wrap(
+                              runSpacing: 20,
+                              children: [
+                                ...products.map((e) => CardProduct(
+                                      product: e,
+                                      changeVisible: changeVisibleModal,
+                                    ))
+                              ],
+                            )
+                          ],
+                        ),
                       )
                     ],
                   ),
-                )
-              ],
-            ),
-          ),
+                ),
+              ),
+            )
+          ],
         ),
         if (isVisible)
           GestureDetector(

@@ -99,9 +99,16 @@ class CardOrder extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       ElevatedButton(
-                          onPressed: () {}, child: Text("View Detail")),
+                        onPressed: () {},
+                        child: Text("View Detail"),
+                      ),
                       ElevatedButton(
-                          onPressed: () {}, child: Text("Update Status"))
+                        onPressed: () {},
+                        child: Text("Update Status"),
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(
+                                Color.fromARGB(255, 248, 200, 63))),
+                      )
                     ],
                   )
                 : Column(

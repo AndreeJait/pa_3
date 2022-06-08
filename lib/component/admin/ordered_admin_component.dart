@@ -85,6 +85,20 @@ class _OrderedAdminComponentState extends State<OrderedAdminComponent>
           product: products[1],
           date: "20-05-2022 11:15",
           quantity: 10,
+          status: "Waiting for Confirmation",
+          totalPrice: 10 * products[0].price,
+          user: User(
+              id: "1213",
+              name: "Example 11",
+              profile: "https://picsum.photos/200",
+              email: "panjaitanandree@gmail.com",
+              address: "Medan",
+              role: "Consumer",
+              noPhone: "081263693706")),
+      Order(
+          product: products[1],
+          date: "20-05-2022 11:15",
+          quantity: 10,
           status: "Done",
           totalPrice: 10 * products[0].price,
           user: User(
