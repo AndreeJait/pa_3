@@ -1,17 +1,34 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'product.g.dart';
+
+@JsonSerializable()
 class Product {
-  String id = "";
-  String image;
+  @JsonKey(name: "_id")
+  String? id;
   String name;
-  double price;
-  int stock;
+  int productDurable;
   int weight;
-  String expiredDate;
+  int temperatureStorage;
+  List<String> variant;
+  List<String> variantImages;
+  List<double> priceVariant;
+  List<String> otherImage;
+  bool isDelete;
   Product(
-      {required this.id,
-      required this.image,
-      required this.expiredDate,
+      {this.id,
       required this.name,
-      required this.price,
-      required this.stock,
-      required this.weight});
+      required this.weight,
+      required this.isDelete,
+      required this.otherImage,
+      required this.priceVariant,
+      required this.productDurable,
+      required this.temperatureStorage,
+      required this.variant,
+      required this.variantImages});
+
+  factory Product.fromJson(Map<String, dynamic> json) =>
+      _$ProductFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ProductToJson(this);
 }

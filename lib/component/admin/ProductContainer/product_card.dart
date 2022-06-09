@@ -36,7 +36,7 @@ class CardProduct extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.network(
-                  product.image,
+                  product.variantImages[0],
                   height: 100,
                 ),
                 Container(
@@ -50,10 +50,12 @@ class CardProduct extends StatelessWidget {
               ],
             ),
           ),
-          ListDetailProduct(value: product.price.toString(), name: "Price"),
-          ListDetailProduct(value: product.stock.toString(), name: "Stock"),
+          ListDetailProduct(
+              value: product.priceVariant[0].toString(), name: "Price"),
+          ListDetailProduct(
+              value: product.otherImage.toString(), name: "Stock"),
           ListDetailProduct(value: product.weight.toString(), name: "Weight"),
-          ListDetailProduct(value: product.expiredDate, name: "Expired Date"),
+          ListDetailProduct(value: product.name, name: "Expired Date"),
           Container(
             margin: const EdgeInsets.only(top: 20),
             width: double.infinity,

@@ -26,24 +26,7 @@ class _OrderedAdminComponentState extends State<OrderedAdminComponent>
   String dropDownValue = "All";
   List<String> spinnerItems = ["All", "Two"];
 
-  List<Product> products = [
-    Product(
-        id: "12314124",
-        image: "https://picsum.photos/250?image=9",
-        expiredDate: "11 Januari 2023",
-        name: "Example Product asda adas asda da sdasd asd asdasd",
-        price: 17000,
-        stock: 100,
-        weight: 100),
-    Product(
-        id: "12314124",
-        image: "https://picsum.photos/250?image=9",
-        expiredDate: "11 Januari 2023",
-        name: "Example Product",
-        price: 17000,
-        stock: 100,
-        weight: 100),
-  ];
+  List<Product> products = [];
   List<Order> tempOrders = [];
   List<Order> orders = [];
 
@@ -52,64 +35,7 @@ class _OrderedAdminComponentState extends State<OrderedAdminComponent>
     // TODO: implement initState
     tabController = TabController(length: tabs.length, vsync: this);
     super.initState();
-    tempOrders = [
-      Order(
-          product: products[0],
-          date: "20-05-2022 11:15",
-          quantity: 10,
-          status: "Waiting for Confirmation",
-          totalPrice: 10 * products[0].price,
-          user: User(
-              id: "1213",
-              name: "Example 11",
-              password: "https://picsum.photos/200",
-              email: "panjaitanandree@gmail.com",
-              address: "Medan",
-              role: "Consumer",
-              phoneNumber: "081263693706")),
-      Order(
-          product: products[1],
-          date: "20-05-2022 11:15",
-          quantity: 10,
-          status: "Waiting for Confirmation",
-          totalPrice: 10 * products[0].price,
-          user: User(
-              id: "1213",
-              name: "Example 11",
-              password: "https://picsum.photos/200",
-              email: "panjaitanandree@gmail.com",
-              address: "Medan",
-              role: "Consumer",
-              phoneNumber: "081263693706")),
-      Order(
-          product: products[1],
-          date: "20-05-2022 11:15",
-          quantity: 10,
-          status: "Waiting for Confirmation",
-          totalPrice: 10 * products[0].price,
-          user: User(
-              id: "1213",
-              name: "Example 11",
-              password: "https://picsum.photos/200",
-              email: "panjaitanandree@gmail.com",
-              address: "Medan",
-              role: "Consumer",
-              phoneNumber: "081263693706")),
-      Order(
-          product: products[1],
-          date: "20-05-2022 11:15",
-          quantity: 10,
-          status: "Done",
-          totalPrice: 10 * products[0].price,
-          user: User(
-              id: "1213",
-              name: "Example 11",
-              password: "https://picsum.photos/200",
-              email: "panjaitanandree@gmail.com",
-              address: "Medan",
-              role: "Consumer",
-              phoneNumber: "081263693706"))
-    ];
+    tempOrders = [];
     if (tabController?.index == 0) {
       orders = [
         ...tempOrders.where((element) =>

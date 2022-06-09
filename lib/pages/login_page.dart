@@ -1,9 +1,15 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:pa_3/api/request/auth_request.dart';
 import 'package:pa_3/api/response/auth_response.dart';
 import 'package:pa_3/api/rest_client.dart';
 import 'package:pa_3/constans/general_router_constant.dart';
+import 'package:pa_3/constans/preferences.dart';
+import 'package:pa_3/constans/role.dart';
+import 'package:pa_3/utils/view_models.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -18,6 +24,9 @@ class _LoginPageState extends State<LoginPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   late String? email;
   late String? password;
+  bool isLoading = false;
+  bool editable = true;
+  Map<String, String?> formValidate = {"password": null, "email": null};
 
   Future<dynamic> _login() async {
     var data = {'email': email, 'password': password};
@@ -25,12 +34,59 @@ class _LoginPageState extends State<LoginPage> {
     Dio dio = Dio();
     // dio.options.headers[]
     final client = RestClient(dio);
+    setState(() {
+      editable = false;
+      isLoading = true;
+    });
     try {
       AuthRequest request = AuthRequest(email: email!, password: password!);
       AuthResponse response = await client.login(request);
-      print(response);
+      ViewModels.ctrlState.sink.add([
+        {"name": "user", "value": response.data},
+        {"name": "token", "value": response.token},
+        {"name": "refresh", "value": response.refresh}
+      ]);
+      final prefs = await SharedPreferences.getInstance();
+      String convert = jsonEncode(response.data!);
+
+      await prefs.setString(prefUser, convert);
+      await prefs.setString(prefRefresh, response.refresh!);
+      await prefs.setString(prefToken, response.token);
+      setState(() {
+        editable = true;
+        isLoading = false;
+        formValidate["email"] = null;
+        formValidate["password"] = null;
+
+        if (response.data!.role == roleAdmin) {
+          Navigator.pushReplacementNamed(context, routeAdmin);
+        }
+      });
+    } on DioError catch (e) {
+      String? errorPass;
+      String? errorEmail;
+      if (e.response != null) {
+        if (e.response!.statusCode == 401) {
+          errorPass = "Password salah";
+        }
+        if (e.response!.statusCode == 404) {
+          errorEmail = "Email tidak ditemukan";
+        }
+      }
+      setState(() {
+        isLoading = false;
+        editable = true;
+        formValidate["email"] = errorEmail;
+        formValidate["password"] = errorPass;
+        _formKey.currentState!.validate();
+      });
     } catch (e) {
-      print(e);
+      print(e.toString());
+      setState(() {
+        isLoading = false;
+        editable = true;
+        _formKey.currentState!.validate();
+      });
     }
   }
 
@@ -81,9 +137,21 @@ class _LoginPageState extends State<LoginPage> {
                     Container(
                       padding: const EdgeInsets.all(10),
                       child: TextFormField(
+                        enabled: editable,
+                        onChanged: (data) {
+                          if (formValidate["email"] != null) {
+                            setState(() {
+                              formValidate["email"] = null;
+                              _formKey.currentState!.validate();
+                            });
+                          }
+                        },
                         validator: (String? emailValue) {
                           if (emailValue!.isEmpty) {
                             return 'Enter your email';
+                          }
+                          if (formValidate["email"] != null) {
+                            return formValidate["email"];
                           }
                           email = emailValue;
                           return null;
@@ -97,10 +165,22 @@ class _LoginPageState extends State<LoginPage> {
                     Container(
                       padding: const EdgeInsets.all(10),
                       child: TextFormField(
+                        enabled: editable,
+                        onChanged: (data) {
+                          if (formValidate["password"] != null) {
+                            setState(() {
+                              formValidate["password"] = null;
+                              _formKey.currentState!.validate();
+                            });
+                          }
+                        },
                         obscureText: !_passwordVisible,
                         validator: (String? passwordValue) {
                           if (passwordValue!.isEmpty) {
                             return 'Enter your password';
+                          }
+                          if (formValidate["password"] != null) {
+                            return formValidate["password"];
                           }
                           password = passwordValue;
                           return null;
@@ -134,14 +214,18 @@ class _LoginPageState extends State<LoginPage> {
                         alignment: Alignment.center,
                         child: TextButton(
                           onPressed: () {
-                            if (_formKey.currentState!.validate()) {
+                            if (_formKey.currentState!.validate() &&
+                                !isLoading) {
                               _login();
                             }
                           },
-                          child: const Text(
-                            'Login',
-                            style: TextStyle(color: Colors.white, fontSize: 18),
-                          ),
+                          child: isLoading
+                              ? CircularProgressIndicator()
+                              : const Text(
+                                  'Login',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 18),
+                                ),
                         ),
                       ),
                     ),

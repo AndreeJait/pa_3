@@ -1,4 +1,4 @@
-const routeDashboard = "/";
+const routeSplash = "/";
 const routeVisitor = "/visitor";
 const routeConsumer = "/consumer";
 const routeMarketing = "/marketing";

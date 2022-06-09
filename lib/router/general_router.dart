@@ -8,7 +8,7 @@ import 'package:pa_3/pages/register_page.dart';
 import 'package:pa_3/pages/splash_screen_page.dart';
 
 var router = {
-  routeDashboard: (context) => const SplashScreen(),
+  routeSplash: (context) => SplashScreen(),
   routeVisitor: (context) => const MasterHomePageVisitor(),
   routeAdmin: (context) => const MasterHomePageAdmin(),
   routeConsumer: (context) => const MasterHomePageConsumer(),

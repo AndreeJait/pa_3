@@ -1,16 +1,41 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:pa_3/api/request/product_request.dart';
+import 'package:pa_3/api/rest_client.dart';
 import 'package:pa_3/constans/general_router_constant.dart';
+import 'package:pa_3/api/response/product_response.dart';
+import 'package:pa_3/utils/view_models.dart';
 
-class SplashScreen extends StatelessWidget {
-  const SplashScreen({Key? key}) : super(key: key);
+class SplashScreen extends StatefulWidget {
+  SplashScreen({Key? key}) : super(key: key);
 
-  // @override
-  // void initState() {
-  //   autoLogin();
-  //   super.initState();
-  // }
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
 
-  Future<void> autoLogin() async {}
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchDataFromApi();
+  }
+
+  void fetchDataFromApi() {
+    print("Here");
+    Dio dio = Dio();
+    // dio.options.headers[]
+    final client = RestClient(dio);
+    ProductRequest request = ProductRequest();
+    client.getProductActive(request).then((value) {
+      print(value);
+      ViewModels.ctrlState.sink.add([
+        {"name": "activeProducts", "value": value.data}
+      ]);
+    }).catchError((error) {
+      print(error);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,10 +58,6 @@ class SplashScreen extends StatelessWidget {
               const CircularProgressIndicator(),
               const SizedBox(
                 height: 15,
-              ),
-              ElevatedButton(
-                child: const Text("Navigate"),
-                onPressed: () => {Navigator.pushNamed(context, routeMarketing)},
               ),
             ],
           ),

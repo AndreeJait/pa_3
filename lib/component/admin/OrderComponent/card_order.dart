@@ -55,7 +55,7 @@ class CardOrder extends StatelessWidget {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: Image.network(
-                        order.product.image,
+                        order.product.variantImages[0],
                         width: 100,
                       ),
                     )),
@@ -79,7 +79,8 @@ class CardOrder extends StatelessWidget {
                                   )),
                                   Container(
                                     margin: const EdgeInsets.only(left: 10),
-                                    child: Text(order.product.price.toString()),
+                                    child: Text(order.product.priceVariant[0]
+                                        .toString()),
                                   )
                                 ],
                               ),

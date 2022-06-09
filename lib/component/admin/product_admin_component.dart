@@ -12,24 +12,7 @@ class ProductAdminComponent extends StatefulWidget {
 
 class _ProductAdminComponentState extends State<ProductAdminComponent> {
   bool isVisible = false;
-  List<Product> products = [
-    Product(
-        id: "12314124",
-        image: "https://picsum.photos/250?image=9",
-        expiredDate: "11 Januari 2023",
-        name: "Example Product",
-        price: 17000,
-        stock: 100,
-        weight: 100),
-    Product(
-        id: "12314124",
-        image: "https://picsum.photos/250?image=9",
-        expiredDate: "11 Januari 2023",
-        name: "Example Product",
-        price: 17000,
-        stock: 100,
-        weight: 100),
-  ];
+  List<Product> products = [];
 
   @override
   void initState() {
