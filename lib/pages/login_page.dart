@@ -1,4 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:pa_3/api/request/auth_request.dart';
+import 'package:pa_3/api/response/auth_response.dart';
+import 'package:pa_3/api/rest_client.dart';
 import 'package:pa_3/constans/general_router_constant.dart';
 
 class LoginPage extends StatefulWidget {
@@ -17,7 +21,17 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<dynamic> _login() async {
     var data = {'email': email, 'password': password};
-    try {} catch (e) {}
+    print(data);
+    Dio dio = Dio();
+    // dio.options.headers[]
+    final client = RestClient(dio);
+    try {
+      AuthRequest request = AuthRequest(email: email!, password: password!);
+      AuthResponse response = await client.login(request);
+      print(response);
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override

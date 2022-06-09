@@ -34,7 +34,7 @@ class CardOrder extends StatelessWidget {
                 children: [
                   ClipOval(
                     child: Image.network(
-                      order.user.profile,
+                      order.user.password,
                       height: 30,
                     ),
                   ),
@@ -107,7 +107,7 @@ class CardOrder extends StatelessWidget {
                         child: Text("Update Status"),
                         style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all(
-                                Color.fromARGB(255, 248, 200, 63))),
+                                const Color.fromARGB(255, 248, 200, 63))),
                       )
                     ],
                   )

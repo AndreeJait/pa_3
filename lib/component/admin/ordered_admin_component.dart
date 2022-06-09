@@ -62,11 +62,11 @@ class _OrderedAdminComponentState extends State<OrderedAdminComponent>
           user: User(
               id: "1213",
               name: "Example 11",
-              profile: "https://picsum.photos/200",
+              password: "https://picsum.photos/200",
               email: "panjaitanandree@gmail.com",
               address: "Medan",
               role: "Consumer",
-              noPhone: "081263693706")),
+              phoneNumber: "081263693706")),
       Order(
           product: products[1],
           date: "20-05-2022 11:15",
@@ -76,11 +76,11 @@ class _OrderedAdminComponentState extends State<OrderedAdminComponent>
           user: User(
               id: "1213",
               name: "Example 11",
-              profile: "https://picsum.photos/200",
+              password: "https://picsum.photos/200",
               email: "panjaitanandree@gmail.com",
               address: "Medan",
               role: "Consumer",
-              noPhone: "081263693706")),
+              phoneNumber: "081263693706")),
       Order(
           product: products[1],
           date: "20-05-2022 11:15",
@@ -90,11 +90,11 @@ class _OrderedAdminComponentState extends State<OrderedAdminComponent>
           user: User(
               id: "1213",
               name: "Example 11",
-              profile: "https://picsum.photos/200",
+              password: "https://picsum.photos/200",
               email: "panjaitanandree@gmail.com",
               address: "Medan",
               role: "Consumer",
-              noPhone: "081263693706")),
+              phoneNumber: "081263693706")),
       Order(
           product: products[1],
           date: "20-05-2022 11:15",
@@ -104,11 +104,11 @@ class _OrderedAdminComponentState extends State<OrderedAdminComponent>
           user: User(
               id: "1213",
               name: "Example 11",
-              profile: "https://picsum.photos/200",
+              password: "https://picsum.photos/200",
               email: "panjaitanandree@gmail.com",
               address: "Medan",
               role: "Consumer",
-              noPhone: "081263693706"))
+              phoneNumber: "081263693706"))
     ];
     if (tabController?.index == 0) {
       orders = [
