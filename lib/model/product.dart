@@ -13,6 +13,7 @@ class Product {
   List<String> variant;
   List<String> variantImages;
   List<double> priceVariant;
+  List<int> variantIndex;
   List<String> otherImage;
   bool isDelete;
   Product(
@@ -25,6 +26,7 @@ class Product {
       required this.productDurable,
       required this.temperatureStorage,
       required this.variant,
+      required this.variantIndex,
       required this.variantImages});
 
   factory Product.fromJson(Map<String, dynamic> json) =>

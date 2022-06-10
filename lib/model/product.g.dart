@@ -21,6 +21,8 @@ Product _$ProductFromJson(Map<String, dynamic> json) => Product(
       temperatureStorage: json['temperatureStorage'] as int,
       variant:
           (json['variant'] as List<dynamic>).map((e) => e as String).toList(),
+      variantIndex:
+          (json['variantIndex'] as List<dynamic>).map((e) => e as int).toList(),
       variantImages: (json['variantImages'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
@@ -35,6 +37,7 @@ Map<String, dynamic> _$ProductToJson(Product instance) => <String, dynamic>{
       'variant': instance.variant,
       'variantImages': instance.variantImages,
       'priceVariant': instance.priceVariant,
+      'variantIndex': instance.variantIndex,
       'otherImage': instance.otherImage,
       'isDelete': instance.isDelete,
     };

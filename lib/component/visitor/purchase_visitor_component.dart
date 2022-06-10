@@ -97,8 +97,8 @@ class _PurchaseVisitorComponentState extends State<PurchaseVisitorComponent> {
                             ),
                             itemCount: e.product.variantImages.length,
                             itemBuilder: (context, index, realIndex) {
-                              final sutarImageList =
-                                  e.product.variantImages[index];
+                              final sutarImageList = e.product
+                                  .variantImages[e.product.variantIndex[index]];
                               final sutarVariant = e.product.variant[index];
                               return buildImage(
                                   sutarImageList, sutarVariant, index);
