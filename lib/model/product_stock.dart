@@ -6,7 +6,7 @@ part 'product_stock.g.dart';
 @JsonSerializable()
 class ProductStock {
   Product product;
-  int stock;
+  List<int> stock;
   DateTime saleDate;
   DateTime outDate;
   ProductStock(

@@ -47,6 +47,7 @@ dependencies:
   logger: any
   permission_handler: ^9.2.0
   shared_preferences: ^2.0.15
+  confirm_dialog: ^1.0.1
   
 
 dev_dependencies:

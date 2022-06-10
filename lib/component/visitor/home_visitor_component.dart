@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:pa_3/constans/api.dart';
 
 import 'package:pa_3/constans/general_router_constant.dart';
+import 'package:pa_3/model/product.dart';
+import 'package:pa_3/utils/view_models.dart';
 
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -14,12 +17,20 @@ class HomeVisitorComponent extends StatefulWidget {
 
 class _HomeVisitorComponentState extends State<HomeVisitorComponent> {
   int activeIndex = 0;
-  final imageLists = [
-    "assets/images/sutar_original.png",
-    "assets/images/sutar_coklat.png",
-    "assets/images/sutar_stroberi.png",
-    "assets/images/mozarella.png",
-  ];
+  List<String> imageLists = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    imageLists = [];
+    ViewModels.state["products"].forEach((element) {
+      Product product = element as Product;
+      product.variantImages.forEach((image) {
+        imageLists.add(image);
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -169,8 +180,8 @@ class _HomeVisitorComponentState extends State<HomeVisitorComponent> {
 
   Widget buildImage(String urlImage, int index) => Container(
         margin: const EdgeInsets.symmetric(horizontal: 40),
-        child: Image.asset(
-          urlImage,
+        child: Image.network(
+          "$baseUrlConstant/$urlImage",
           fit: BoxFit.cover,
         ),
       );

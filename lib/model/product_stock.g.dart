@@ -10,7 +10,7 @@ ProductStock _$ProductStockFromJson(Map<String, dynamic> json) => ProductStock(
       outDate: DateTime.parse(json['outDate'] as String),
       product: Product.fromJson(json['product'] as Map<String, dynamic>),
       saleDate: DateTime.parse(json['saleDate'] as String),
-      stock: json['stock'] as int,
+      stock: (json['stock'] as List<dynamic>).map((e) => e as int).toList(),
     );
 
 Map<String, dynamic> _$ProductStockToJson(ProductStock instance) =>

@@ -1,10 +1,13 @@
+import 'package:confirm_dialog/confirm_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pa_3/api/request/product_request.dart';
 import 'package:pa_3/api/rest_client.dart';
 import 'package:pa_3/constans/general_router_constant.dart';
 import 'package:pa_3/api/response/product_response.dart';
 import 'package:pa_3/utils/view_models.dart';
+import 'dart:io' show Platform, exit;
 
 class SplashScreen extends StatefulWidget {
   SplashScreen({Key? key}) : super(key: key);
@@ -21,20 +24,59 @@ class _SplashScreenState extends State<SplashScreen> {
     fetchDataFromApi();
   }
 
-  void fetchDataFromApi() {
-    print("Here");
+  Future<void> fetchDataFromApi() async {
+    try {
+      bool product = await fetchProduct();
+      bool activeProduct = await fetchActiveProduct();
+      if (product && activeProduct) {
+        setState(() {
+          Navigator.pushReplacementNamed(context, routeVisitor);
+        });
+      }
+    } catch (e) {
+      print(e);
+      bool isOk = await confirm(context,
+          title: const Text("Error Found"),
+          content: const Text("Failed to get data"),
+          textOK: const Text("Try Again"),
+          textCancel: const Text("Exit"));
+
+      if (isOk) {
+        fetchActiveProduct();
+      } else {
+        if (Platform.isAndroid) {
+          SystemNavigator.pop();
+        } else if (Platform.isIOS) {
+          exit(0);
+        }
+      }
+    }
+  }
+
+  Future<bool> fetchProduct() async {
     Dio dio = Dio();
     // dio.options.headers[]
     final client = RestClient(dio);
     ProductRequest request = ProductRequest();
-    client.getProductActive(request).then((value) {
-      print(value);
-      ViewModels.ctrlState.sink.add([
-        {"name": "activeProducts", "value": value.data}
-      ]);
-    }).catchError((error) {
-      print(error);
-    });
+    ProductResponse response = await client.getProduct(request);
+    ViewModels.ctrlState.sink.add([
+      {"name": "products", "value": response.data}
+    ]);
+    return true;
+  }
+
+  Future<bool> fetchActiveProduct() async {
+    Dio dio = Dio();
+    // dio.options.headers[]
+    final client = RestClient(dio);
+    ProductRequest request = ProductRequest();
+    ProductActiveResponse response = await client.getProductActive(request);
+
+    ViewModels.ctrlState.sink.add([
+      {"name": "activeProducts", "value": response.data}
+    ]);
+
+    return true;
   }
 
   @override
