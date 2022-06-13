@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:pa_3/component/consumer/order/order_form_controller.dart';
 import 'package:pa_3/constans/router_consumer.dart';
-import 'package:pa_3/model/Product.dart';
-import 'package:pa_3/model/User.dart';
+import 'package:pa_3/model/Secondary/Product.dart';
+import 'package:pa_3/model/Secondary/User.dart';
 
 import 'package:singel_page_route/singel_page_route.dart';
 import 'package:get/get.dart';
@@ -17,6 +17,10 @@ class OrderConsumerComponent extends StatefulWidget {
 
 class _OrderConsumerComponentState extends State<OrderConsumerComponent> {
   final OrderController o = Get.put(OrderController());
+
+  get products => null;
+
+  get users => null;
 
   @override
   Widget build(BuildContext context) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pa_3/constans/api.dart';
-import 'package:pa_3/model/Product.dart';
+import 'package:pa_3/model/Secondary/Product.dart';
 import 'package:pa_3/model/order.dart';
 
 class CardOrder extends StatelessWidget {

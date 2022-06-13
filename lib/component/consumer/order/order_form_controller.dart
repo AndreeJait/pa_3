@@ -1,4 +1,4 @@
-import 'package:pa_3/model/Product.dart';
+import 'package:pa_3/model/Secondary/Product.dart';
 import 'package:get/get.dart';
 
 class OrderController extends GetxController {
