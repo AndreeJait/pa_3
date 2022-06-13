@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:pa_3/constans/general_router_constant.dart';
-import 'package:pa_3/model/Secondary/User.dart';
+import 'package:pa_3/temporary_model/User.dart';
 
 class ProfileMarketingComponent extends StatefulWidget {
   const ProfileMarketingComponent({Key? key}) : super(key: key);

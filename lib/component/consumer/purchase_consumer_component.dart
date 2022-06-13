@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:pa_3/constans/router_consumer.dart';
-import 'package:pa_3/model/Secondary/Product.dart';
-import 'package:pa_3/model/Secondary/Order.dart';
+import 'package:pa_3/temporary_model/Product.dart';
+import 'package:pa_3/temporary_model/Order.dart';
 
 class PurchaseConsumerComponent extends StatefulWidget {
   const PurchaseConsumerComponent({Key? key}) : super(key: key);

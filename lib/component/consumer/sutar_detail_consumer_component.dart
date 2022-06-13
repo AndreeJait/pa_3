@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:pa_3/component/consumer/order/order_form_controller.dart';
 import 'package:pa_3/constans/router_consumer.dart';
-import 'package:pa_3/model/Secondary/Product.dart';
+import 'package:pa_3/temporary_model/Product.dart';
 
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:singel_page_route/singel_page_route.dart';
