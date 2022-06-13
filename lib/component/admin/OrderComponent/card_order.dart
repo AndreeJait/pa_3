@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pa_3/constans/api.dart';
-import 'package:pa_3/temporary_model/Product.dart';
 import 'package:pa_3/model/order.dart';
 
 class CardOrder extends StatelessWidget {
   Order order;
   CardOrder({Key? key, required this.order}) : super(key: key);
-
+  String selected = "waiting";
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -122,7 +121,7 @@ class CardOrder extends StatelessWidget {
           ),
           Container(
             margin: const EdgeInsets.only(top: 20),
-            child: !(order.status == "Done" || order.status == "Canceled")
+            child: !(order.status == "done" || order.status == "canceled")
                 ? Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -131,7 +130,27 @@ class CardOrder extends StatelessWidget {
                         child: Text("View Detail"),
                       ),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          AlertDialog alert = AlertDialog(
+                            title: Text("Upadte Status"),
+                            content: Column(
+                              children: [
+                                Radio<String>(
+                                    value: selected,
+                                    groupValue: selected,
+                                    onChanged: (String? value) {
+                                      selected = value!;
+                                    })
+                              ],
+                            ),
+                            actions: [],
+                          );
+                          await showDialog(
+                              context: context,
+                              builder: (context) {
+                                return alert;
+                              });
+                        },
                         child: Text("Update Status"),
                         style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all(

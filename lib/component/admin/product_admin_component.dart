@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pa_3/component/admin/ProductContainer/product_card.dart';
+import 'package:pa_3/constans/router_admin.dart';
 import 'package:pa_3/model/product.dart';
 import 'package:pa_3/model/product_stock.dart';
 import 'package:pa_3/utils/view_models.dart';
+import 'package:singel_page_route/singel_page_route.dart';
 
 class ProductAdminComponent extends StatefulWidget {
   ProductAdminComponent({Key? key}) : super(key: key);
@@ -18,7 +20,6 @@ class _ProductAdminComponentState extends State<ProductAdminComponent> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     print(products.length);
   }
@@ -40,7 +41,9 @@ class _ProductAdminComponentState extends State<ProductAdminComponent> {
               spacing: 20,
               children: [
                 ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      SingelPageRoute.pushName(routeFormProduct);
+                    },
                     style: ButtonStyle(
                         backgroundColor:
                             MaterialStateProperty.all(Colors.blue[300]),
@@ -64,7 +67,9 @@ class _ProductAdminComponentState extends State<ProductAdminComponent> {
                       ],
                     )),
                 ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      SingelPageRoute.pushName(routeFormProductStock);
+                    },
                     style: ButtonStyle(
                         backgroundColor:
                             MaterialStateProperty.all(Colors.blue[300]),
@@ -151,14 +156,14 @@ class _ProductAdminComponentState extends State<ProductAdminComponent> {
                             const Text(
                                 "Are you sure want to remove this product ?"),
                             Container(
-                              margin: EdgeInsets.only(top: 20),
+                              margin: const EdgeInsets.only(top: 20),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   ElevatedButton(
                                     onPressed: () {},
-                                    child: Text("Yes"),
+                                    child: const Text("Yes"),
                                     style: ButtonStyle(
                                         backgroundColor:
                                             MaterialStateProperty.all(
@@ -174,7 +179,6 @@ class _ProductAdminComponentState extends State<ProductAdminComponent> {
                                     onPressed: () {
                                       changeVisibleModal(false);
                                     },
-                                    child: Text("No"),
                                     style: ButtonStyle(
                                         backgroundColor:
                                             MaterialStateProperty.all(
@@ -185,6 +189,7 @@ class _ProductAdminComponentState extends State<ProductAdminComponent> {
                                           borderRadius:
                                               BorderRadius.circular(18.0),
                                         ))),
+                                    child: const Text("No"),
                                   )
                                 ],
                               ),

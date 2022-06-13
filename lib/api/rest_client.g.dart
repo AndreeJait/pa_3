@@ -100,6 +100,70 @@ class _RestClient implements RestClient {
   }
 
   @override
+  Future<ProductActiveSingleResponse> createProductStock(request) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(request.toJson());
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<ProductActiveSingleResponse>(
+            Options(method: 'POST', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/product/stock',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = ProductActiveSingleResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<ProductSingleResponse> createProduct(
+      variantImage,
+      name,
+      productDurable,
+      weight,
+      temperatureStorage,
+      variant,
+      priceVariant,
+      variantIndex) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.files.addAll(variantImage.map((i) => MapEntry(
+        'variantImage',
+        MultipartFile.fromFileSync(
+          i.path,
+          filename: i.path.split(Platform.pathSeparator).last,
+        ))));
+    _data.fields.add(MapEntry('name', name));
+    _data.fields.add(MapEntry('productDurable', productDurable.toString()));
+    _data.fields.add(MapEntry('weight', weight.toString()));
+    _data.fields
+        .add(MapEntry('temperatureStorage', temperatureStorage.toString()));
+    variant.forEach((i) {
+      _data.fields.add(MapEntry('variant', i));
+    });
+    priceVariant.forEach((i) {
+      _data.fields.add(MapEntry('priceVariant', i));
+    });
+    variantIndex.forEach((i) {
+      _data.fields.add(MapEntry('variantIndex', i));
+    });
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<ProductSingleResponse>(Options(
+                method: 'POST',
+                headers: _headers,
+                extra: _extra,
+                contentType: 'multipart/form-data')
+            .compose(_dio.options, '/product/',
+                queryParameters: queryParameters, data: _data)
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = ProductSingleResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
   Future<OrderResponse> getAllOrder(request) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};

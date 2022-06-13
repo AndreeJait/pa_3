@@ -17,3 +17,20 @@ Map<String, dynamic> _$ProductRequestToJson(ProductRequest instance) =>
       'limit': instance.limit,
       'skip': instance.skip,
     };
+
+ProductStockRequest _$ProductStockRequestFromJson(Map<String, dynamic> json) =>
+    ProductStockRequest(
+      outDate: json['outDate'] as String,
+      stock: (json['stock'] as List<dynamic>).map((e) => e as int).toList(),
+      product: json['product'] as String,
+      saleDate: json['saleDate'] as String,
+    );
+
+Map<String, dynamic> _$ProductStockRequestToJson(
+        ProductStockRequest instance) =>
+    <String, dynamic>{
+      'product': instance.product,
+      'stock': instance.stock,
+      'saleDate': instance.saleDate,
+      'outDate': instance.outDate,
+    };

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:pa_3/api/request/auth_request.dart';
 import 'package:pa_3/api/request/order_request.dart';
@@ -30,6 +32,22 @@ abstract class RestClient {
 
   @POST("/product/all")
   Future<ProductResponse> getProduct(@Body() ProductRequest request);
+
+  @POST("/product/stock")
+  Future<ProductActiveSingleResponse> createProductStock(
+      @Body() ProductStockRequest request);
+
+  @POST("/product/")
+  @MultiPart()
+  Future<ProductSingleResponse> createProduct(
+      @Part() List<File> variantImage,
+      @Part() String name,
+      @Part() int productDurable,
+      @Part() int weight,
+      @Part() int temperatureStorage,
+      @Part() List<String> variant,
+      @Part() List<String> priceVariant,
+      @Part() List<String> variantIndex);
 
   @POST("/order/")
   Future<OrderResponse> getAllOrder(@Body() OrderRequest request);

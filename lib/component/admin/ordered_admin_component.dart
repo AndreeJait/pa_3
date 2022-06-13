@@ -92,12 +92,12 @@ class _OrderedAdminComponentState extends State<OrderedAdminComponent>
       print(current.length);
       OrderResponse response = await client.getAllOrder(request);
       print(response.data.length);
-      // ViewModels.ctrlState.sink.add([
-      //   {
-      //     "name": "allorders",
-      //     "value": [...current, ...response.data]
-      //   },
-      // ]);
+      ViewModels.ctrlState.sink.add([
+        {
+          "name": "allorders",
+          "value": [...current, ...response.data]
+        },
+      ]);
       setState(() {
         tempOrders = [...current, ...response.data];
       });

@@ -12,3 +12,20 @@ class ProductRequest {
 
   Map<String, dynamic> toJson() => _$ProductRequestToJson(this);
 }
+
+@JsonSerializable()
+class ProductStockRequest {
+  String product;
+  List<int> stock;
+  String saleDate;
+  String outDate;
+  ProductStockRequest(
+      {required this.outDate,
+      required this.stock,
+      required this.product,
+      required this.saleDate});
+  factory ProductStockRequest.fromJson(Map<String, dynamic> json) =>
+      _$ProductStockRequestFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ProductStockRequestToJson(this);
+}

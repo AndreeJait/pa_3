@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:pa_3/component/admin/ProductContainer/list_detail_product.dart';
 import 'package:pa_3/constans/api.dart';
 import 'package:pa_3/model/product.dart';
@@ -79,7 +80,9 @@ class _CardProductState extends State<CardProduct> {
             ),
           ),
           ListDetailProduct(
-              value: widget.stock.product.priceVariant[activeIndex].toString(),
+              value:
+                  NumberFormat.simpleCurrency(locale: "IDR", decimalDigits: 2)
+                      .format(widget.stock.product.priceVariant[activeIndex]),
               name: "Price"),
           ListDetailProduct(
               value: widget.stock.stock[activeIndex].toString(), name: "Stock"),

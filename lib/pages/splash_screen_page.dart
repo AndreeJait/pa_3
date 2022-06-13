@@ -1,9 +1,6 @@
 import 'dart:convert';
-import 'dart:developer' as developer;
-import 'dart:math';
-import 'dart:ui';
+import 'dart:io' show Platform, exit;
 
-import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:confirm_dialog/confirm_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -11,16 +8,13 @@ import 'package:flutter/services.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:pa_3/api/request/product_request.dart';
 import 'package:pa_3/api/response/auth_response.dart';
+import 'package:pa_3/api/response/product_response.dart';
 import 'package:pa_3/api/rest_client.dart';
 import 'package:pa_3/constans/general_router_constant.dart';
-import 'package:pa_3/api/response/product_response.dart';
 import 'package:pa_3/constans/preferences.dart';
-import 'package:pa_3/constans/role.dart';
 import 'package:pa_3/model/user.dart';
 import 'package:pa_3/utils/user_utils.dart';
 import 'package:pa_3/utils/view_models.dart';
-import 'dart:io' show Platform, exit;
-
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
