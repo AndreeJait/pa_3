@@ -1,3 +1,7 @@
+import 'dart:isolate';
+import 'dart:ui';
+import 'dart:developer';
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:pa_3/constans/general_router_constant.dart';
 import 'package:pa_3/router/general_router.dart' as general_router;
@@ -10,7 +14,15 @@ void main() async {
   await Permission.storage.request();
   ViewModels.initViewModels();
   await Permission.camera.request();
+  await AndroidAlarmManager.initialize();
   runApp(const MyApp());
+  await AndroidAlarmManager.cancel(0);
+  var success = await AndroidAlarmManager.periodic(
+      const Duration(minutes: 2), 0, () async {
+    print("Hellow");
+  }, wakeup: true);
+
+  print(success);
 }
 
 class MyApp extends StatelessWidget {

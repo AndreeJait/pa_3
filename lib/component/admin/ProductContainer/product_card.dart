@@ -1,14 +1,24 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pa_3/component/admin/ProductContainer/list_detail_product.dart';
+import 'package:pa_3/constans/api.dart';
 import 'package:pa_3/model/product.dart';
+import 'package:pa_3/model/product_stock.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class CardProduct extends StatelessWidget {
-  Product product;
+class CardProduct extends StatefulWidget {
+  ProductStock stock;
   Function changeVisible;
-  CardProduct({Key? key, required this.product, required this.changeVisible})
+  CardProduct({Key? key, required this.stock, required this.changeVisible})
       : super(key: key);
 
+  @override
+  State<CardProduct> createState() => _CardProductState();
+}
+
+class _CardProductState extends State<CardProduct> {
+  int activeIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -29,33 +39,56 @@ class CardProduct extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            margin: EdgeInsets.only(bottom: 20),
+            margin: const EdgeInsets.only(bottom: 20),
             width: double.infinity,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.network(
-                  product.variantImages[0],
-                  height: 100,
+                CarouselSlider.builder(
+                  options: CarouselOptions(
+                    height: MediaQuery.of(context).size.height / 4,
+                    enableInfiniteScroll: false,
+                    enlargeCenterPage: true,
+                    enlargeStrategy: CenterPageEnlargeStrategy.height,
+                    autoPlayInterval: const Duration(seconds: 2),
+                    onPageChanged: (index, reason) {
+                      setState(() {
+                        activeIndex = index;
+                      });
+                    },
+                  ),
+                  itemCount: widget.stock.product.variant.length,
+                  itemBuilder: (context, index, realIndex) {
+                    final imageList = widget.stock.product.variantImages[
+                        widget.stock.product.variantIndex[index]];
+                    final itemName = widget.stock.product.variant[index];
+                    return buildproductCard(imageList, itemName, index);
+                  },
                 ),
                 Container(
-                  margin: EdgeInsets.only(top: 10),
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  margin: const EdgeInsets.only(top: 10),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
                       color: Colors.indigo[100],
                       borderRadius: const BorderRadius.all(Radius.circular(5))),
-                  child: Text(product.name),
+                  child: Text(widget.stock.product.name),
                 )
               ],
             ),
           ),
           ListDetailProduct(
-              value: product.priceVariant[0].toString(), name: "Price"),
+              value: widget.stock.product.priceVariant[activeIndex].toString(),
+              name: "Price"),
           ListDetailProduct(
-              value: product.otherImage.toString(), name: "Stock"),
-          ListDetailProduct(value: product.weight.toString(), name: "Weight"),
-          ListDetailProduct(value: product.name, name: "Expired Date"),
+              value: widget.stock.stock[activeIndex].toString(), name: "Stock"),
+          ListDetailProduct(
+              value: widget.stock.product.weight.toString(), name: "Weight"),
+          ListDetailProduct(
+              value:
+                  "${widget.stock.outDate.day}-${widget.stock.outDate.month}-${widget.stock.outDate.year}",
+              name: "Expired Date"),
           Container(
             margin: const EdgeInsets.only(top: 20),
             width: double.infinity,
@@ -67,10 +100,6 @@ class CardProduct extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () {},
-                  child: const FaIcon(
-                    FontAwesomeIcons.penToSquare,
-                    size: 20,
-                  ),
                   style: ButtonStyle(
                       backgroundColor:
                           MaterialStateProperty.all(Colors.yellow[700]),
@@ -78,21 +107,25 @@ class CardProduct extends StatelessWidget {
                           RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ))),
+                  child: const FaIcon(
+                    FontAwesomeIcons.penToSquare,
+                    size: 20,
+                  ),
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    changeVisible(true);
+                    widget.changeVisible(true);
                   },
-                  child: const FaIcon(
-                    FontAwesomeIcons.trash,
-                    size: 20,
-                  ),
                   style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(Colors.red),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ))),
+                  child: const FaIcon(
+                    FontAwesomeIcons.trash,
+                    size: 20,
+                  ),
                 )
               ],
             ),
@@ -101,4 +134,51 @@ class CardProduct extends StatelessWidget {
       ),
     );
   }
+
+  Widget buildIndicator() => AnimatedSmoothIndicator(
+        activeIndex: activeIndex,
+        count: widget.stock.product.variant.length,
+        effect: const JumpingDotEffect(
+          dotWidth: 10,
+          dotHeight: 10,
+          activeDotColor: Color(0xffF8C83F),
+          dotColor: Color(0xffE0E0E0),
+        ),
+      );
+
+  Widget buildproductCard(String urlImage, String itemName, int index) => Card(
+        margin: const EdgeInsets.symmetric(horizontal: 20),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(children: [
+          Padding(
+            padding: const EdgeInsets.all(2.0),
+            child: Image.network(
+              "$baseUrlConstant/$urlImage",
+              width: MediaQuery.of(context).size.width / 4,
+              height: MediaQuery.of(context).size.height / 5.5,
+            ),
+          ),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.indigo[100],
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(8),
+                  bottomRight: Radius.circular(8),
+                ),
+              ),
+              width: double.infinity,
+              height: 20,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(itemName),
+                ],
+              ),
+            ),
+          ),
+        ]),
+      );
 }

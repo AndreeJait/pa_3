@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pa_3/component/admin/ProductContainer/product_card.dart';
 import 'package:pa_3/model/product.dart';
+import 'package:pa_3/model/product_stock.dart';
+import 'package:pa_3/utils/view_models.dart';
 
 class ProductAdminComponent extends StatefulWidget {
   ProductAdminComponent({Key? key}) : super(key: key);
@@ -12,12 +14,13 @@ class ProductAdminComponent extends StatefulWidget {
 
 class _ProductAdminComponentState extends State<ProductAdminComponent> {
   bool isVisible = false;
-  List<Product> products = [];
+  List<ProductStock> products = ViewModels.getState("activeProducts");
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    print(products.length);
   }
 
   changeVisibleModal(bool value) {
@@ -104,7 +107,7 @@ class _ProductAdminComponentState extends State<ProductAdminComponent> {
                               runSpacing: 20,
                               children: [
                                 ...products.map((e) => CardProduct(
-                                      product: e,
+                                      stock: e,
                                       changeVisible: changeVisibleModal,
                                     ))
                               ],

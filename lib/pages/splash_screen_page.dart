@@ -1,13 +1,27 @@
+import 'dart:convert';
+import 'dart:developer' as developer;
+import 'dart:math';
+import 'dart:ui';
+
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:confirm_dialog/confirm_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:jwt_decode/jwt_decode.dart';
 import 'package:pa_3/api/request/product_request.dart';
+import 'package:pa_3/api/response/auth_response.dart';
 import 'package:pa_3/api/rest_client.dart';
 import 'package:pa_3/constans/general_router_constant.dart';
 import 'package:pa_3/api/response/product_response.dart';
+import 'package:pa_3/constans/preferences.dart';
+import 'package:pa_3/constans/role.dart';
+import 'package:pa_3/model/user.dart';
+import 'package:pa_3/utils/user_utils.dart';
 import 'package:pa_3/utils/view_models.dart';
 import 'dart:io' show Platform, exit;
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   SplashScreen({Key? key}) : super(key: key);
@@ -29,9 +43,38 @@ class _SplashScreenState extends State<SplashScreen> {
       bool product = await fetchProduct();
       bool activeProduct = await fetchActiveProduct();
       if (product && activeProduct) {
-        setState(() {
-          Navigator.pushReplacementNamed(context, routeVisitor);
-        });
+        final prefs = await SharedPreferences.getInstance();
+        if (prefs.getString(prefToken) != null) {
+          String token = prefs.getString(prefToken)!;
+          String refresh = prefs.getString(prefRefresh)!;
+          String jsonStringUser = prefs.getString(prefUser)!;
+          User user = User.fromJson(jsonDecode(jsonStringUser));
+          if (Jwt.isExpired(token)) {
+            print("Expired");
+            Dio dio = Dio();
+            dio.options.headers["Authorization"] = "Bearer $refresh";
+            final client = RestClient(dio);
+            AuthResponse response = await client.refreshToken();
+            setupUserData(response);
+
+            setState(() {
+              redirectByRole(user, context);
+            });
+          } else {
+            ViewModels.ctrlState.sink.add([
+              {"name": "user", "value": user},
+              {"name": "token", "value": token},
+              {"name": "refresh", "value": refresh}
+            ]);
+            setState(() {
+              redirectByRole(user, context);
+            });
+          }
+        } else {
+          setState(() {
+            Navigator.pushReplacementNamed(context, routeVisitor);
+          });
+        }
       }
     } catch (e) {
       print(e);
@@ -62,6 +105,7 @@ class _SplashScreenState extends State<SplashScreen> {
     ViewModels.ctrlState.sink.add([
       {"name": "products", "value": response.data}
     ]);
+    print(response.data.length);
     return true;
   }
 

@@ -1,5 +1,16 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:pa_3/api/request/auth_request.dart';
+import 'package:pa_3/api/response/auth_response.dart';
+import 'package:pa_3/api/rest_client.dart';
 import 'package:pa_3/constans/general_router_constant.dart';
+import 'package:pa_3/constans/preferences.dart';
+import 'package:pa_3/constans/role.dart';
+import 'package:pa_3/utils/user_utils.dart';
+import 'package:pa_3/utils/view_models.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -13,23 +24,77 @@ class _RegisterPageState extends State<RegisterPage> {
   var _confirmPasswordVisible = false;
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  late String? username;
+  late String? name;
   late String? email;
   late String? phone;
+  late String? address;
   late String? password;
   late String? confirmPassword;
+  bool isLoading = false;
+  bool editable = true;
 
   Future<dynamic> _register() async {
-    var data = {
-      'username': username,
-      'email': email,
-      'phone': phone,
-      'password': password,
-      'confirmPassword': confirmPassword,
-    };
-    try {} catch (e) {}
+    AuthRequest request = AuthRequest(
+        email: email!,
+        password: password!,
+        name: name,
+        address: address,
+        phoneNumber: phone,
+        role: "Consumer");
+    Dio dio = Dio();
+    // dio.options.headers[]
+    final client = RestClient(dio);
+    setState(() {
+      editable = false;
+      isLoading = true;
+    });
+    try {
+      AuthResponse response = await client.register(request);
+      setupUserData(response);
+      setState(() {
+        editable = true;
+        isLoading = false;
+        formValidate["email"] = null;
+        formValidate["password"] = null;
+
+        redirectByRole(response.data!, context);
+      });
+    } on DioError catch (e) {
+      String? errorPass;
+      String? errorEmail;
+      if (e.response != null) {
+        if (e.response!.statusCode == 401) {
+          errorPass = "Password salah";
+        }
+        if (e.response!.statusCode == 404) {
+          errorEmail = "Email tidak ditemukan";
+        }
+      }
+      setState(() {
+        isLoading = false;
+        editable = true;
+        formValidate["email"] = errorEmail;
+        formValidate["password"] = errorPass;
+        _formKey.currentState!.validate();
+      });
+    } catch (e) {
+      print(e.toString());
+      setState(() {
+        isLoading = false;
+        editable = true;
+        _formKey.currentState!.validate();
+      });
+    }
   }
 
+  Map<String, String?> formValidate = {
+    "password": null,
+    "email": null,
+    "confirm_password": null,
+    "phone_number": null,
+    "address": null,
+    "name": null
+  };
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -78,19 +143,36 @@ class _RegisterPageState extends State<RegisterPage> {
                     Container(
                       padding: const EdgeInsets.all(10),
                       child: TextFormField(
-                        validator: (String? usernameValue) {
-                          if (usernameValue!.isEmpty) {
-                            return 'Enter your username';
+                        validator: (String? nameValue) {
+                          if (nameValue!.isEmpty) {
+                            return 'Enter your Name';
                           }
-                          username = usernameValue;
+                          name = nameValue;
                           return null;
                         },
                         decoration: const InputDecoration(
-                          hintText: 'Username',
+                          hintText: 'Name',
                           hintStyle: TextStyle(color: Colors.black54),
                         ),
                       ),
                     ),
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      child: TextFormField(
+                        validator: (String? value) {
+                          if (value!.isEmpty) {
+                            return 'Enter your phone number';
+                          }
+                          phone = value;
+                          return null;
+                        },
+                        decoration: const InputDecoration(
+                          hintText: 'Phone Number',
+                          hintStyle: TextStyle(color: Colors.black54),
+                        ),
+                      ),
+                    ),
+
                     // Email
                     Container(
                       padding: const EdgeInsets.all(10),
@@ -104,6 +186,22 @@ class _RegisterPageState extends State<RegisterPage> {
                         },
                         decoration: const InputDecoration(
                           hintText: 'Email',
+                          hintStyle: TextStyle(color: Colors.black54),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      child: TextFormField(
+                        validator: (String? value) {
+                          if (value!.isEmpty) {
+                            return 'Enter your address';
+                          }
+                          address = value;
+                          return null;
+                        },
+                        decoration: const InputDecoration(
+                          hintText: 'Address',
                           hintStyle: TextStyle(color: Colors.black54),
                         ),
                       ),
@@ -167,6 +265,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 ))),
                       ),
                     ),
+
                     Container(
                       margin: const EdgeInsets.only(top: 10),
                       height: 50,
@@ -183,10 +282,13 @@ class _RegisterPageState extends State<RegisterPage> {
                               _register();
                             }
                           },
-                          child: const Text(
-                            'REGISTER',
-                            style: TextStyle(color: Colors.white, fontSize: 18),
-                          ),
+                          child: isLoading
+                              ? CircularProgressIndicator()
+                              : const Text(
+                                  'Register',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 18),
+                                ),
                         ),
                       ),
                     ),

@@ -9,13 +9,15 @@ class AuthRequest {
   String? name;
   String? role;
   String? address;
+  String? phoneNumber;
 
   AuthRequest(
       {required this.email,
       this.address,
       this.name,
       required this.password,
-      this.role});
+      this.role,
+      this.phoneNumber});
 
   factory AuthRequest.fromJson(Map<String, dynamic> json) =>
       _$AuthRequestFromJson(json);

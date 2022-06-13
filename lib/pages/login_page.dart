@@ -8,6 +8,7 @@ import 'package:pa_3/api/rest_client.dart';
 import 'package:pa_3/constans/general_router_constant.dart';
 import 'package:pa_3/constans/preferences.dart';
 import 'package:pa_3/constans/role.dart';
+import 'package:pa_3/utils/user_utils.dart';
 import 'package:pa_3/utils/view_models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -41,26 +42,14 @@ class _LoginPageState extends State<LoginPage> {
     try {
       AuthRequest request = AuthRequest(email: email!, password: password!);
       AuthResponse response = await client.login(request);
-      ViewModels.ctrlState.sink.add([
-        {"name": "user", "value": response.data},
-        {"name": "token", "value": response.token},
-        {"name": "refresh", "value": response.refresh}
-      ]);
-      final prefs = await SharedPreferences.getInstance();
-      String convert = jsonEncode(response.data!);
-
-      await prefs.setString(prefUser, convert);
-      await prefs.setString(prefRefresh, response.refresh!);
-      await prefs.setString(prefToken, response.token);
+      setupUserData(response);
       setState(() {
         editable = true;
         isLoading = false;
         formValidate["email"] = null;
         formValidate["password"] = null;
 
-        if (response.data!.role == roleAdmin) {
-          Navigator.pushReplacementNamed(context, routeAdmin);
-        }
+        redirectByRole(response.data!, context);
       });
     } on DioError catch (e) {
       String? errorPass;
