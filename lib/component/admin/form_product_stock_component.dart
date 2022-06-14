@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ffi';
 
 import 'package:dio/dio.dart';
@@ -22,7 +23,9 @@ class FormProductStock extends StatefulWidget {
 
 class _FormProductStockState extends State<FormProductStock> {
   List<Product> products = [...ViewModels.getState("products")];
+  ProductStock? productStock;
   Product selectedProduct = ViewModels.getState("products")[0];
+  bool isEditMode = false;
   List<TextEditingController> editingControllers = [
     ...ViewModels.getState("products")[0]
         .variant
@@ -38,7 +41,36 @@ class _FormProductStockState extends State<FormProductStock> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    if (ViewModels.state.containsKey("editStock")) {
+      setState(() {
+        productStock = ViewModels.getState("editStock");
+        if (productStock != null) {
+          int foundIndex = products
+              .indexWhere((element) => element.id == productStock!.product.id);
+          if (foundIndex != -1) {
+            selectedProduct = products[foundIndex];
+          }
+          isEditMode = true;
+          editingControllers = [
+            ...productStock!.product.variant.map((e) => TextEditingController())
+          ];
+          editingControllers.asMap().map((key, value) =>
+              MapEntry(key, value.text = productStock!.stock[key].toString()));
+          selectedDate = productStock!.saleDate;
+          outDate = productStock!.outDate;
+        }
+      });
+    }
     print(products.length);
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    ViewModels.ctrlState.sink.add([
+      {"name": "editStock", "value": null}
+    ]);
   }
 
   @override
@@ -300,7 +332,11 @@ class _FormProductStockState extends State<FormProductStock> {
                                 MaterialStateProperty.all(Colors.green[400])),
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            await createNewStockProduct();
+                            if (isEditMode) {
+                              await updateStock();
+                            } else {
+                              await createNewStockProduct();
+                            }
                             setState(() {
                               isLoading = false;
                             });
@@ -311,9 +347,13 @@ class _FormProductStockState extends State<FormProductStock> {
                             : Wrap(
                                 spacing: 20,
                                 crossAxisAlignment: WrapCrossAlignment.center,
-                                children: const [
-                                  Text("Tambahkan Stock"),
-                                  FaIcon(FontAwesomeIcons.plus)
+                                children: [
+                                  Text(isEditMode
+                                      ? "Simpan Perubahan"
+                                      : "Tambahkan Stock"),
+                                  !isEditMode
+                                      ? const FaIcon(FontAwesomeIcons.plus)
+                                      : const FaIcon(FontAwesomeIcons.check)
                                 ],
                               ))
                   ],
@@ -392,6 +432,95 @@ class _FormProductStockState extends State<FormProductStock> {
       if (e.response!.statusCode == 400) {
         message = "Nama produk sudah ada atau ada field kosong";
       }
+
+      // set up the AlertDialog
+      AlertDialog alert = AlertDialog(
+        title: Text("AlertDialog"),
+        content: Text(message),
+        actions: [
+          cancelButton,
+          continueButton,
+        ],
+      );
+
+      // show the dialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return alert;
+        },
+      );
+    }
+  }
+
+  Future<void> updateStock() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String token = prefs.getString(prefToken)!;
+      String refresh = prefs.getString(prefRefresh)!;
+      Dio dio = Dio();
+      dio.options.headers["Authorization"] = "Bearer $token";
+      final client = RestClient(dio);
+      var formatter = DateFormat("yyyy-MM-dd");
+      List<int> stock = [...editingControllers.map((e) => int.parse(e.text))];
+      ProductStockEditRequest request = ProductStockEditRequest(
+          id: productStock!.id!,
+          outDate: formatter.format(outDate),
+          stock: stock,
+          product: selectedProduct.id!,
+          saleDate: formatter.format(selectedDate));
+      var response = await client.editProductActive(request);
+      List<ProductStock> products = [...ViewModels.getState("activeProducts")];
+      var foundIndex =
+          products.indexWhere((element) => element.id == response.data.id);
+      products[foundIndex] = response.data;
+      ViewModels.ctrlState.sink.add([
+        {"name": "activeProducts", "value": products}
+      ]);
+      Widget continueButton = TextButton(
+        child: Text("Ok"),
+        onPressed: () {
+          setState(() {
+            Navigator.of(context).pop();
+          });
+        },
+      );
+      // set up the AlertDialog
+      AlertDialog alert = AlertDialog(
+        title: Text("Success to edit"),
+        content:
+            Text("Berhasil melakukan perubahan ${response.data.product.name}"),
+        actions: [
+          continueButton,
+        ],
+      );
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return alert;
+        },
+      );
+    } on DioError catch (e) {
+      Widget cancelButton = TextButton(
+        child: Text("Cancel"),
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+      );
+      Widget continueButton = TextButton(
+        child: Text("Try Again"),
+        onPressed: () async {
+          Navigator.of(context).pop();
+          await updateStock();
+          setState(() {
+            isLoading = false;
+          });
+        },
+      );
+      String message = e.message;
 
       // set up the AlertDialog
       AlertDialog alert = AlertDialog(

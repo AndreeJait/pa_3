@@ -1,10 +1,15 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:pa_3/api/response/delete_response.dart';
+import 'package:pa_3/api/rest_client.dart';
 import 'package:pa_3/component/admin/ProductContainer/product_card.dart';
+import 'package:pa_3/constans/preferences.dart';
 import 'package:pa_3/constans/router_admin.dart';
 import 'package:pa_3/model/product.dart';
 import 'package:pa_3/model/product_stock.dart';
 import 'package:pa_3/utils/view_models.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:singel_page_route/singel_page_route.dart';
 
 class ProductAdminComponent extends StatefulWidget {
@@ -17,7 +22,7 @@ class ProductAdminComponent extends StatefulWidget {
 class _ProductAdminComponentState extends State<ProductAdminComponent> {
   bool isVisible = false;
   List<ProductStock> products = ViewModels.getState("activeProducts");
-
+  bool isLoading = false;
   @override
   void initState() {
     super.initState();
@@ -162,8 +167,69 @@ class _ProductAdminComponentState extends State<ProductAdminComponent> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   ElevatedButton(
-                                    onPressed: () {},
-                                    child: const Text("Yes"),
+                                    onPressed: () async {
+                                      setState(() {
+                                        isLoading = true;
+                                      });
+                                      ProductStock stock =
+                                          ViewModels.getState("currentStock");
+                                      final prefs =
+                                          await SharedPreferences.getInstance();
+                                      String token =
+                                          prefs.getString(prefToken)!;
+                                      String refresh =
+                                          prefs.getString(prefRefresh)!;
+                                      Dio dio = Dio();
+                                      dio.options.headers["Authorization"] =
+                                          "Bearer $token";
+                                      final client = RestClient(dio);
+                                      try {
+                                        await client
+                                            .deleteProductStock(stock.id!);
+                                        List<ProductStock> old = [
+                                          ...ViewModels.getState(
+                                              "activeProducts")
+                                        ];
+                                        old.removeWhere((element) =>
+                                            element.id == stock.id);
+                                        ViewModels.ctrlState.sink.add([
+                                          {
+                                            "name": "activeProducts",
+                                            "value": old
+                                          }
+                                        ]);
+                                        setState(() {
+                                          products = old;
+                                        });
+                                        changeVisibleModal(false);
+                                      } on DioError catch (e) {
+                                        Widget cancelButton = TextButton(
+                                          child: Text("Cancel"),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        );
+                                        String message = e.message;
+                                        AlertDialog alert = AlertDialog(
+                                          title: Text("AlertDialog"),
+                                          content: Text(message),
+                                          actions: [
+                                            cancelButton,
+                                          ],
+                                        );
+
+                                        // show the dialog
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return alert;
+                                          },
+                                        );
+                                      }
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                    },
                                     style: ButtonStyle(
                                         backgroundColor:
                                             MaterialStateProperty.all(
@@ -174,6 +240,9 @@ class _ProductAdminComponentState extends State<ProductAdminComponent> {
                                           borderRadius:
                                               BorderRadius.circular(18.0),
                                         ))),
+                                    child: isLoading
+                                        ? const CircularProgressIndicator()
+                                        : const Text("Yes"),
                                   ),
                                   ElevatedButton(
                                     onPressed: () {

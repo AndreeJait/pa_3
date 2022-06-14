@@ -5,6 +5,8 @@ part 'product_stock.g.dart';
 
 @JsonSerializable()
 class ProductStock {
+  @JsonKey(name: "_id")
+  String? id;
   Product product;
   List<int> stock;
   DateTime saleDate;
@@ -13,7 +15,8 @@ class ProductStock {
       {required this.outDate,
       required this.product,
       required this.saleDate,
-      required this.stock});
+      required this.stock,
+      this.id});
 
   factory ProductStock.fromJson(Map<String, dynamic> json) =>
       _$ProductStockFromJson(json);

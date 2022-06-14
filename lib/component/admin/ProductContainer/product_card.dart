@@ -4,8 +4,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:pa_3/component/admin/ProductContainer/list_detail_product.dart';
 import 'package:pa_3/constans/api.dart';
+import 'package:pa_3/constans/router_admin.dart';
 import 'package:pa_3/model/product.dart';
 import 'package:pa_3/model/product_stock.dart';
+import 'package:pa_3/utils/view_models.dart';
+import 'package:singel_page_route/singel_page_route.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class CardProduct extends StatefulWidget {
@@ -102,7 +105,12 @@ class _CardProductState extends State<CardProduct> {
               spacing: 10,
               children: [
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    ViewModels.ctrlState.sink.add([
+                      {"name": "editStock", "value": widget.stock}
+                    ]);
+                    SingelPageRoute.pushName(routeFormProductStock);
+                  },
                   style: ButtonStyle(
                       backgroundColor:
                           MaterialStateProperty.all(Colors.yellow[700]),
@@ -117,6 +125,9 @@ class _CardProductState extends State<CardProduct> {
                 ),
                 ElevatedButton(
                   onPressed: () {
+                    ViewModels.ctrlState.sink.add([
+                      {"name": "currentStock", "value": widget.stock}
+                    ]);
                     widget.changeVisible(true);
                   },
                   style: ButtonStyle(

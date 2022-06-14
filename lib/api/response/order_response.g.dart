@@ -17,3 +17,14 @@ Map<String, dynamic> _$OrderResponseToJson(OrderResponse instance) =>
     <String, dynamic>{
       'data': instance.data,
     };
+
+OrderSingleResponse _$OrderSingleResponseFromJson(Map<String, dynamic> json) =>
+    OrderSingleResponse(
+      data: Order.fromJson(json['data'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$OrderSingleResponseToJson(
+        OrderSingleResponse instance) =>
+    <String, dynamic>{
+      'data': instance.data,
+    };

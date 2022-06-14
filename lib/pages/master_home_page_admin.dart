@@ -52,6 +52,7 @@ class _MasterHomePageAdminState extends State<MasterHomePageAdmin> {
       appBar: SingelPageRoute.currentName == routeHOME
           ? null
           : PreferredSize(
+              preferredSize: const Size.fromHeight(50),
               child: Container(
                 height: 50,
                 padding: const EdgeInsets.symmetric(
@@ -62,11 +63,24 @@ class _MasterHomePageAdminState extends State<MasterHomePageAdmin> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    ClipOval(
-                      child: Image.network(
-                        "https://picsum.photos/250?image=9",
-                        height: 35,
-                      ),
+                    Wrap(
+                      spacing: 20,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        if (SingelPageRoute.histories.length > 1)
+                          InkWell(
+                            onTap: () {
+                              SingelPageRoute.previous();
+                            },
+                            child: FaIcon(FontAwesomeIcons.arrowLeft),
+                          ),
+                        ClipOval(
+                          child: Image.network(
+                            "https://picsum.photos/250?image=9",
+                            height: 35,
+                          ),
+                        ),
+                      ],
                     ),
                     GestureDetector(
                       onTap: () {
@@ -79,8 +93,7 @@ class _MasterHomePageAdminState extends State<MasterHomePageAdmin> {
                     )
                   ],
                 ),
-              ),
-              preferredSize: const Size.fromHeight(50)),
+              )),
       body: Container(
         child: view,
       ),
