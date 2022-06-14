@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:pa_3/api/request/auth_request.dart';
 import 'package:pa_3/api/request/order_request.dart';
 import 'package:pa_3/api/request/product_request.dart';
 import 'package:pa_3/api/response/auth_response.dart';
+import 'package:pa_3/api/response/delete_response.dart';
 import 'package:pa_3/api/response/order_response.dart';
 import 'package:pa_3/api/response/product_response.dart';
 import 'package:pa_3/constans/api.dart';
@@ -31,6 +34,47 @@ abstract class RestClient {
   @POST("/product/all")
   Future<ProductResponse> getProduct(@Body() ProductRequest request);
 
+  @POST("/product/stock")
+  Future<ProductActiveSingleResponse> createProductStock(
+      @Body() ProductStockRequest request);
+
+  @POST("/product/")
+  @MultiPart()
+  Future<ProductSingleResponse> createProduct(
+      @Part() List<File> variantImage,
+      @Part() String name,
+      @Part() int productDurable,
+      @Part() int weight,
+      @Part() int temperatureStorage,
+      @Part() List<String> variant,
+      @Part() List<String> priceVariant,
+      @Part() List<String> variantIndex);
+
   @POST("/order/")
   Future<OrderResponse> getAllOrder(@Body() OrderRequest request);
+
+  @POST("/order/{id}")
+  Future<OrderResponse> getMyOrder(
+      @Body() OrderRequest request, @Part() String id);
+
+  @DELETE("/product/{id}")
+  Future<DeleteResponse> deleteProduct(@Path() String id);
+
+  @DELETE("/product/stock/{id}")
+  Future<DeleteResponse> deleteProductStock(@Path() String id);
+
+  @PUT("/product/stock")
+  Future<ProductActiveSingleResponse> editProductActive(
+      @Body() ProductStockEditRequest request);
+
+  @POST("/order/change/status")
+  Future<OrderSingleResponse> changeStatusOrder(
+      @Body() OrderStatusRequest request);
+
+  @POST("/order/paid")
+  @MultiPart()
+  Future<OrderSingleResponse> paidOrder(@Part() String id, @Part() File proof);
+
+  @POST("/order/create")
+  Future<OrderSingleResponse> createAllOrder(@Body() OrderNewRequest request);
 }

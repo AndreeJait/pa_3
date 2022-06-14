@@ -27,3 +27,27 @@ class ProductResponse {
 
   Map<String, dynamic> toJson() => _$ProductResponseToJson(this);
 }
+
+@JsonSerializable()
+class ProductSingleResponse {
+  Product data;
+
+  ProductSingleResponse({required this.data});
+
+  factory ProductSingleResponse.fromJson(Map<String, dynamic> json) =>
+      _$ProductSingleResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ProductSingleResponseToJson(this);
+}
+
+@JsonSerializable()
+class ProductActiveSingleResponse {
+  ProductStock data;
+
+  ProductActiveSingleResponse({required this.data});
+
+  factory ProductActiveSingleResponse.fromJson(Map<String, dynamic> json) =>
+      _$ProductActiveSingleResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ProductActiveSingleResponseToJson(this);
+}

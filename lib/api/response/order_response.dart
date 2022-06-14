@@ -14,3 +14,15 @@ class OrderResponse {
 
   Map<String, dynamic> toJson() => _$OrderResponseToJson(this);
 }
+
+@JsonSerializable()
+class OrderSingleResponse {
+  Order data;
+
+  OrderSingleResponse({required this.data});
+
+  factory OrderSingleResponse.fromJson(Map<String, dynamic> json) =>
+      _$OrderSingleResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$OrderSingleResponseToJson(this);
+}

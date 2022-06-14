@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
 
-import 'package:singel_page_route/singel_page_route.dart';
-import 'package:pa_3/router/singel_marketing_router.dart';
+import 'package:flutter/material.dart';
 import 'package:pa_3/component/bottom_navigator.dart';
 import 'package:pa_3/constans/router_marketing.dart';
 import 'package:pa_3/model/bottom_navigator.dart';
+import 'package:pa_3/router/singel_marketing_router.dart';
+import 'package:singel_page_route/singel_page_route.dart';
 
 class MasterHomePageMarketing extends StatefulWidget {
   const MasterHomePageMarketing({Key? key}) : super(key: key);

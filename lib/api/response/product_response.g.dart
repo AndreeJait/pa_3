@@ -31,3 +31,27 @@ Map<String, dynamic> _$ProductResponseToJson(ProductResponse instance) =>
     <String, dynamic>{
       'data': instance.data,
     };
+
+ProductSingleResponse _$ProductSingleResponseFromJson(
+        Map<String, dynamic> json) =>
+    ProductSingleResponse(
+      data: Product.fromJson(json['data'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$ProductSingleResponseToJson(
+        ProductSingleResponse instance) =>
+    <String, dynamic>{
+      'data': instance.data,
+    };
+
+ProductActiveSingleResponse _$ProductActiveSingleResponseFromJson(
+        Map<String, dynamic> json) =>
+    ProductActiveSingleResponse(
+      data: ProductStock.fromJson(json['data'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$ProductActiveSingleResponseToJson(
+        ProductActiveSingleResponse instance) =>
+    <String, dynamic>{
+      'data': instance.data,
+    };

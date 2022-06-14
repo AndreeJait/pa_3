@@ -7,6 +7,8 @@ const routePRODUCT = "PRODUCT";
 const routeORDER = "ORDER";
 const routePROFILE = "PROFILE";
 const routeNOTIF = "NOTIFICATION";
+const routeFormProduct = "PRODUCT_FORM";
+const routeFormProductStock = "PRODUCT_FORM_STOCK";
 
 var bottomNavigators = [
   BottomNavigatorModel(
