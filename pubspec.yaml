@@ -51,6 +51,7 @@ dependencies:
   jwt_decode: ^0.3.1
   android_alarm_manager_plus: ^2.0.5
   image_picker: ^0.8.5+3
+  image_downloader: ^0.31.0
   
   
 

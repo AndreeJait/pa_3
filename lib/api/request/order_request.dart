@@ -40,7 +40,6 @@ class OrderNewRequest {
 
 @JsonSerializable()
 class OrderStatusRequest {
-  @JsonKey(name: "_id")
   String id;
   String status;
   OrderStatusRequest({required this.id, required this.status});

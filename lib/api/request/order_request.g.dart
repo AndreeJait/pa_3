@@ -45,12 +45,12 @@ Map<String, dynamic> _$OrderNewRequestToJson(OrderNewRequest instance) =>
 
 OrderStatusRequest _$OrderStatusRequestFromJson(Map<String, dynamic> json) =>
     OrderStatusRequest(
-      id: json['_id'] as String,
+      id: json['id'] as String,
       status: json['status'] as String,
     );
 
 Map<String, dynamic> _$OrderStatusRequestToJson(OrderStatusRequest instance) =>
     <String, dynamic>{
-      '_id': instance.id,
+      'id': instance.id,
       'status': instance.status,
     };

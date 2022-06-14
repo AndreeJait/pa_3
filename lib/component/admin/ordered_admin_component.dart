@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:pa_3/api/request/order_request.dart';
@@ -6,11 +8,13 @@ import 'package:pa_3/api/rest_client.dart';
 import 'package:pa_3/component/admin/OrderComponent/card_order.dart';
 import 'package:pa_3/component/admin/OrderComponent/tabbar_custom.dart';
 import 'package:pa_3/constans/preferences.dart';
+import 'package:pa_3/constans/router_admin.dart';
 import 'package:pa_3/model/order.dart';
 import 'package:pa_3/model/product.dart';
 import 'package:pa_3/model/user.dart';
 import 'package:pa_3/utils/view_models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:singel_page_route/singel_page_route.dart';
 
 class OrderedAdminComponent extends StatefulWidget {
   OrderedAdminComponent({Key? key}) : super(key: key);
@@ -30,30 +34,59 @@ class _OrderedAdminComponentState extends State<OrderedAdminComponent>
       text: "History",
     )
   ];
-  String dropDownValue = "All";
-  List<String> spinnerItems = ["All", "Two"];
+  List<String> orderedFilter = [
+    "all",
+    "packing",
+    "waiting_confirmation",
+    "accepted",
+    "waiting_user_confirmation",
+    "unpaid",
+    "sent",
+    "receive_by_user",
+  ];
+  List<String> historyFilter = ["all", "done", "canceled"];
+  String dropDownValue = "all";
+  List<String> spinnerItems = [];
 
   List<Product> products = [];
   List<Order> tempOrders = [];
   List<Order> orders = [];
+  bool getData = true;
+  StreamSubscription? subscription;
 
   @override
   void initState() {
     // TODO: implement initState
+    subscription = ViewModels.stateStream.listen((event) {
+      var foundIndex =
+          event.indexWhere((element) => element["name"] == "allorders");
+      if (foundIndex != -1) {
+        setState(() {
+          tempOrders = event[foundIndex]["value"];
+          if (tabController?.index == 0) {
+            orders = [
+              ...tempOrders.where((element) =>
+                  element.status != "done" && element.status != "canceled")
+            ];
+            dropDownValue = "all";
+            spinnerItems = orderedFilter;
+          } else {
+            orders = [
+              ...tempOrders.where((element) =>
+                  !(element.status != "done" && element.status != "canceled"))
+            ];
+            dropDownValue = "all";
+            spinnerItems = historyFilter;
+          }
+        });
+      }
+    });
     tabController = TabController(length: tabs.length, vsync: this);
     super.initState();
     getOrders().then((value) {
-      if (tabController?.index == 0) {
-        orders = [
-          ...tempOrders.where((element) =>
-              element.status != "done" && element.status != "canceled")
-        ];
-      } else {
-        orders = [
-          ...tempOrders.where((element) =>
-              !(element.status != "done" && element.status != "canceled"))
-        ];
-      }
+      setState(() {
+        getData = false;
+      });
     });
 
     tabController?.addListener(() {
@@ -63,6 +96,8 @@ class _OrderedAdminComponentState extends State<OrderedAdminComponent>
             ...tempOrders.where((element) =>
                 element.status != "done" && element.status != "canceled")
           ];
+          dropDownValue = "all";
+          spinnerItems = orderedFilter;
         });
       } else {
         setState(() {
@@ -70,6 +105,8 @@ class _OrderedAdminComponentState extends State<OrderedAdminComponent>
             ...tempOrders.where((element) =>
                 !(element.status != "done" && element.status != "canceled"))
           ];
+          dropDownValue = "all";
+          spinnerItems = historyFilter;
         });
       }
     });
@@ -98,9 +135,6 @@ class _OrderedAdminComponentState extends State<OrderedAdminComponent>
           "value": [...current, ...response.data]
         },
       ]);
-      setState(() {
-        tempOrders = [...current, ...response.data];
-      });
     } else {
       try {
         OrderRequest request = OrderRequest();
@@ -108,9 +142,6 @@ class _OrderedAdminComponentState extends State<OrderedAdminComponent>
         ViewModels.ctrlState.sink.add([
           {"name": "allorders", "value": response.data},
         ]);
-        setState(() {
-          tempOrders = response.data;
-        });
       } on DioError catch (e) {
         print(e);
       }
@@ -118,57 +149,87 @@ class _OrderedAdminComponentState extends State<OrderedAdminComponent>
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    if (subscription != null) {
+      subscription!.cancel();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      child: Column(
-        children: [
-          TabBarCustom(tabController: tabController!, tabs: tabs),
-          Container(
-            width: double.infinity,
-            margin: EdgeInsets.only(top: 20, bottom: 20),
-            child: DropdownButton<String>(
-              isExpanded: true,
-              value: dropDownValue,
-              icon: const Icon(
-                Icons.arrow_drop_down,
-              ),
-              iconSize: 24,
-              elevation: 16,
-              style: const TextStyle(color: Colors.black, fontSize: 18),
-              underline: Container(
-                height: 1,
-                color: Colors.black,
-              ),
-              onChanged: (String? data) {
-                setState(() {
-                  dropDownValue = data!;
-                });
-              },
-              items: [
-                ...spinnerItems.map((e) => DropdownMenuItem(
-                      child: Text(e),
-                      value: e,
-                    ))
+    return getData
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : Container(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+            child: Column(
+              children: [
+                TabBarCustom(tabController: tabController!, tabs: tabs),
+                Container(
+                  width: double.infinity,
+                  margin: EdgeInsets.only(top: 20, bottom: 20),
+                  child: DropdownButton<String>(
+                    isExpanded: true,
+                    value: dropDownValue,
+                    icon: const Icon(
+                      Icons.arrow_drop_down,
+                    ),
+                    iconSize: 24,
+                    elevation: 16,
+                    style: const TextStyle(color: Colors.black, fontSize: 18),
+                    underline: Container(
+                      height: 1,
+                      color: Colors.black,
+                    ),
+                    onChanged: (String? data) {
+                      setState(() {
+                        dropDownValue = data!;
+                        if (tabController?.index == 0) {
+                          orders = [
+                            ...tempOrders.where((element) =>
+                                element.status != "done" &&
+                                element.status != "canceled" &&
+                                (element.status == dropDownValue ||
+                                    dropDownValue == "all"))
+                          ];
+                        } else {
+                          orders = [
+                            ...tempOrders.where((element) =>
+                                !(element.status != "done" &&
+                                    element.status != "canceled") &&
+                                (element.status == dropDownValue ||
+                                    dropDownValue == "all"))
+                          ];
+                        }
+                      });
+                    },
+                    items: [
+                      ...spinnerItems.map((e) => DropdownMenuItem(
+                            child: Text(e),
+                            value: e,
+                          ))
+                    ],
+                  ),
+                ),
+                Expanded(
+                    child: TabBarView(
+                  controller: tabController,
+                  children: [
+                    SingleChildScrollView(
+                        child: Column(
+                      children: [...orders.map((e) => CardOrder(order: e))],
+                    )),
+                    SingleChildScrollView(
+                        child: Column(
+                      children: [...orders.map((e) => CardOrder(order: e))],
+                    )),
+                  ],
+                ))
               ],
             ),
-          ),
-          Expanded(
-              child: TabBarView(
-            controller: tabController,
-            children: [
-              SingleChildScrollView(
-                  child: Column(
-                children: [...orders.map((e) => CardOrder(order: e))],
-              )),
-              SingleChildScrollView(
-                  child: Column(
-                children: [...orders.map((e) => CardOrder(order: e))],
-              )),
-            ],
-          ))
-        ],
-      ),
-    );
+          );
   }
 }
