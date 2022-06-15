@@ -6,7 +6,7 @@ import 'package:pa_3/component/marketing/order_marketing_component.dart';
 import 'package:pa_3/component/marketing/profile_marketing_component.dart';
 import 'package:pa_3/constans/router_marketing.dart';
 
-const routes = {
+var routes = {
   routeHome: HomeMarketingComponent(),
   routeAbout: AboutMarketingComponent(),
   routeProfile: ProfileMarketingComponent(),

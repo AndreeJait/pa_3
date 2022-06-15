@@ -79,7 +79,7 @@ class _SplashScreenState extends State<SplashScreen> {
           textCancel: const Text("Exit"));
 
       if (isOk) {
-        fetchActiveProduct();
+        fetchDataFromApi();
       } else {
         if (Platform.isAndroid) {
           SystemNavigator.pop();
