@@ -1,308 +1,232 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
 
-import 'package:pa_3/constans/router_marketing.dart';
-import 'package:pa_3/temporary_model/Product.dart';
-import 'package:pa_3/temporary_model/Order.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:pa_3/api/request/order_request.dart';
+import 'package:pa_3/api/response/order_response.dart';
+import 'package:pa_3/api/rest_client.dart';
+import 'package:pa_3/component/marketing/OrderComponent/card_order.dart';
+import 'package:pa_3/component/marketing/OrderComponent/tabbar_custom.dart';
+import 'package:pa_3/constans/preferences.dart';
+import 'package:pa_3/model/order.dart';
+import 'package:pa_3/model/product.dart';
+import 'package:pa_3/utils/view_models.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeMarketingComponent extends StatefulWidget {
-  const HomeMarketingComponent({Key? key}) : super(key: key);
+  HomeMarketingComponent({Key? key}) : super(key: key);
 
   @override
   State<HomeMarketingComponent> createState() => _HomeMarketingComponentState();
 }
 
-class _HomeMarketingComponentState extends State<HomeMarketingComponent> {
-  var foundOrders = orders;
-  int _selectedPage = 0;
-  PageController _pageController = PageController();
-  Product findProduct(id) => products.firstWhere((product) => product.id == id);
+class _HomeMarketingComponentState extends State<HomeMarketingComponent>
+    with SingleTickerProviderStateMixin {
+  TabController? tabController;
+  List<Tab> tabs = const [
+    Tab(
+      text: "Ordered",
+    ),
+    Tab(
+      text: "History",
+    )
+  ];
+  List<String> orderedFilter = [
+    "all",
+    "packing",
+    "waiting_confirmation",
+    "accepted",
+    "waiting_user_confirmation",
+    "unpaid",
+    "sent",
+    "receive_by_user",
+  ];
+  List<String> historyFilter = ["all", "done", "canceled"];
+  String dropDownValue = "all";
+  List<String> spinnerItems = [];
 
-  void _changePage(int pageNum) {
-    setState(() {
-      _selectedPage = pageNum;
-      _pageController.animateToPage(pageNum,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.fastLinearToSlowEaseIn);
-    });
-  }
-
-  void findOrder(String status) {
-    setState(() {
-      foundOrders = orders.where((order) => order.status == status).toList();
-    });
-  }
+  List<Product> products = [];
+  List<Order> tempOrders = [];
+  List<Order> orders = [];
+  bool getData = true;
+  StreamSubscription? subscription;
 
   @override
   void initState() {
-    _pageController = PageController();
+    // TODO: implement initState
+    subscription = ViewModels.stateStream.listen((event) {
+      var foundIndex =
+          event.indexWhere((element) => element["name"] == "allorders");
+      if (foundIndex != -1) {
+        setState(() {
+          tempOrders = event[foundIndex]["value"];
+          if (tabController?.index == 0) {
+            orders = [
+              ...tempOrders.where((element) =>
+                  element.status != "done" && element.status != "canceled")
+            ];
+            dropDownValue = "all";
+            spinnerItems = orderedFilter;
+          } else {
+            orders = [
+              ...tempOrders.where((element) =>
+                  !(element.status != "done" && element.status != "canceled"))
+            ];
+            dropDownValue = "all";
+            spinnerItems = historyFilter;
+          }
+        });
+      }
+    });
+    tabController = TabController(length: tabs.length, vsync: this);
     super.initState();
+    getOrders().then((value) {
+      setState(() {
+        getData = false;
+      });
+    });
+
+    tabController?.addListener(() {
+      if (tabController?.index == 0) {
+        setState(() {
+          orders = [
+            ...tempOrders.where((element) =>
+                element.status != "done" && element.status != "canceled")
+          ];
+          dropDownValue = "all";
+          spinnerItems = orderedFilter;
+        });
+      } else {
+        setState(() {
+          orders = [
+            ...tempOrders.where((element) =>
+                !(element.status != "done" && element.status != "canceled"))
+          ];
+          dropDownValue = "all";
+          spinnerItems = historyFilter;
+        });
+      }
+    });
+  }
+
+  Future<void> getOrders() async {
+    final prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString(prefToken)!;
+    String refresh = prefs.getString(prefRefresh)!;
+    Dio dio = Dio();
+    dio.options.headers["Authorization"] = "Bearer $token";
+    final client = RestClient(dio);
+    if (ViewModels.state.containsKey("allorders")) {
+      print("Here");
+      List<Order> current = ViewModels.getState("allorders");
+      setState(() {
+        tempOrders = current;
+      });
+      OrderRequest request = OrderRequest(skip: 20);
+      print(current.length);
+      OrderResponse response = await client.getAllOrder(request);
+      print(response.data.length);
+      ViewModels.ctrlState.sink.add([
+        {
+          "name": "allorders",
+          "value": [...current, ...response.data]
+        },
+      ]);
+    } else {
+      try {
+        OrderRequest request = OrderRequest();
+        OrderResponse response = await client.getAllOrder(request);
+        ViewModels.ctrlState.sink.add([
+          {"name": "allorders", "value": response.data},
+        ]);
+      } on DioError catch (e) {
+        print(e);
+      }
+    }
   }
 
   @override
   void dispose() {
-    _pageController.dispose();
+    // TODO: implement dispose
     super.dispose();
+    if (subscription != null) {
+      subscription!.cancel();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return getData
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : Container(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+            child: Column(
               children: [
-                TabButton(
-                  title: "Ordered",
-                  pageNumber: 0,
-                  selectedPage: _selectedPage,
-                  onPressed: () {
-                    _changePage(0);
-                  },
-                ),
-                TabButton(
-                  title: "History",
-                  pageNumber: 1,
-                  selectedPage: _selectedPage,
-                  onPressed: () {
-                    _changePage(1);
-                  },
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: PageView(
-              controller: _pageController,
-              onPageChanged: (int page) {
-                setState(() {
-                  _selectedPage = page;
-                });
-              },
-              children: [
-                SizedBox(
-                  height: MediaQuery.of(context).size.height,
-                  child: ListView.builder(
-                    itemCount: foundOrders.length,
-                    itemBuilder: (context, index) {
-                      return Container(
-                          padding: const EdgeInsets.all(10),
-                          margin: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white,
-                              border: Border.all(
-                                color: const Color(0xffE0E0E0),
-                                width: 2,
-                              )),
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(foundOrders[index].buyer),
-                                  Text(
-                                    foundOrders[index].status,
-                                    style: const TextStyle(color: Colors.green),
-                                  )
-                                ],
-                              ),
-                              const Divider(
-                                height: 30,
-                              ),
-                              Row(
-                                children: [
-                                  ConstrainedBox(
-                                    constraints: const BoxConstraints(
-                                      minWidth: 64,
-                                      minHeight: 64,
-                                      maxWidth: 84,
-                                      maxHeight: 84,
-                                    ),
-                                    child: Image.asset(
-                                        foundOrders[index].imageUrl,
-                                        fit: BoxFit.cover),
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(findProduct(foundOrders[index]
-                                              .products
-                                              .toString())
-                                          .name),
-                                      // findProduct(orders[index].products.toString()).name
-                                      // findProduct(foundOrders[index].products.toString()).name
-                                      Text(
-                                        'Quantity: ${foundOrders[index].quantity}',
-                                      ),
-                                      Text(
-                                        'Total Payment: ${foundOrders[index].totalPayment}',
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  ElevatedButton(
-                                    style: raisedButtonstyle,
-                                    child: const Text("Update Status"),
-                                    onPressed: () {
-                                      Navigator.pushNamed(context, routeAbout);
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ));
+                TabBarCustom(tabController: tabController!, tabs: tabs),
+                Container(
+                  width: double.infinity,
+                  margin: EdgeInsets.only(top: 20, bottom: 20),
+                  child: DropdownButton<String>(
+                    isExpanded: true,
+                    value: dropDownValue,
+                    icon: const Icon(
+                      Icons.arrow_drop_down,
+                    ),
+                    iconSize: 24,
+                    elevation: 16,
+                    style: const TextStyle(color: Colors.black, fontSize: 18),
+                    underline: Container(
+                      height: 1,
+                      color: Colors.black,
+                    ),
+                    onChanged: (String? data) {
+                      setState(() {
+                        dropDownValue = data!;
+                        if (tabController?.index == 0) {
+                          orders = [
+                            ...tempOrders.where((element) =>
+                                element.status != "done" &&
+                                element.status != "canceled" &&
+                                (element.status == dropDownValue ||
+                                    dropDownValue == "all"))
+                          ];
+                        } else {
+                          orders = [
+                            ...tempOrders.where((element) =>
+                                !(element.status != "done" &&
+                                    element.status != "canceled") &&
+                                (element.status == dropDownValue ||
+                                    dropDownValue == "all"))
+                          ];
+                        }
+                      });
                     },
+                    items: [
+                      ...spinnerItems.map((e) => DropdownMenuItem(
+                            child: Text(e),
+                            value: e,
+                          ))
+                    ],
                   ),
                 ),
-                ListView.builder(
-                  itemCount: foundOrders.length,
-                  itemBuilder: (context, index) {
-                    return Container(
-                        padding: const EdgeInsets.all(10),
-                        margin: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.white,
-                            border: Border.all(
-                              color: const Color(0xffE0E0E0),
-                              width: 2,
-                            )),
+                Expanded(
+                    child: TabBarView(
+                  controller: tabController,
+                  children: [
+                    SingleChildScrollView(
                         child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(foundOrders[index].buyer),
-                                Text(
-                                  foundOrders[index].status,
-                                  style: const TextStyle(color: Colors.green),
-                                )
-                              ],
-                            ),
-                            const Divider(
-                              height: 30,
-                            ),
-                            Row(
-                              children: [
-                                ConstrainedBox(
-                                  constraints: const BoxConstraints(
-                                    minWidth: 64,
-                                    minHeight: 64,
-                                    maxWidth: 84,
-                                    maxHeight: 84,
-                                  ),
-                                  child: Image.asset(
-                                      foundOrders[index].imageUrl,
-                                      fit: BoxFit.cover),
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(findProduct(foundOrders[index]
-                                            .products
-                                            .toString())
-                                        .name),
-                                    // findProduct(orders[index].products.toString()).name
-                                    // findProduct(foundOrders[index].products.toString()).name
-                                    Text(
-                                      'Quantity: ${foundOrders[index].quantity}',
-                                    ),
-                                    Text(
-                                      'Total Payment: ${foundOrders[index].totalPayment}',
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                ElevatedButton(
-                                  style: raisedButtonstyle,
-                                  child: const Text("Update Status"),
-                                  onPressed: () {
-                                    Navigator.pushNamed(context, routeAbout);
-                                  },
-                                ),
-                              ],
-                            ),
-                          ],
-                        ));
-                  },
-                ),
+                      children: [...orders.map((e) => CardOrder(order: e))],
+                    )),
+                    SingleChildScrollView(
+                        child: Column(
+                      children: [...orders.map((e) => CardOrder(order: e))],
+                    )),
+                  ],
+                ))
               ],
             ),
-          )
-        ],
-      ),
-    );
+          );
   }
 }
-
-class TabButton extends StatelessWidget {
-  final String title;
-  final int selectedPage;
-  final int pageNumber;
-  final VoidCallback onPressed;
-
-  const TabButton(
-      {Key? key,
-      required this.title,
-      required this.selectedPage,
-      required this.pageNumber,
-      required this.onPressed})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 1000),
-        curve: Curves.fastLinearToSlowEaseIn,
-        decoration: BoxDecoration(
-          color: selectedPage == pageNumber
-              ? const Color(0xffF8C83F)
-              : const Color(0xffF0F0F0),
-          borderRadius: BorderRadius.circular(100),
-        ),
-        padding: EdgeInsets.symmetric(
-          vertical: selectedPage == pageNumber ? 12.0 : 6.0,
-          horizontal: selectedPage == pageNumber ? 20.0 : 10.0,
-        ),
-        margin: EdgeInsets.symmetric(
-          vertical: selectedPage == pageNumber ? 6.0 : 12.0,
-          horizontal: selectedPage == pageNumber ? 10.0 : 20.0,
-        ),
-        child: Text(
-          title,
-          style: TextStyle(
-            color: selectedPage == pageNumber
-                ? Colors.white
-                : const Color(0xff585858),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-final ButtonStyle raisedButtonstyle = ElevatedButton.styleFrom(
-  onPrimary: Colors.white,
-  primary: const Color(0xffF8C83F),
-  minimumSize: const Size(88, 36),
-  padding: const EdgeInsets.symmetric(horizontal: 16),
-  shape: const RoundedRectangleBorder(
-    borderRadius: BorderRadius.all(Radius.circular(10)),
-  ),
-);

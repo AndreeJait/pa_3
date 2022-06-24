@@ -1,9 +1,6 @@
-import 'dart:ffi';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:image_downloader/image_downloader.dart';
 import 'package:intl/intl.dart';
 import 'package:pa_3/api/request/order_request.dart';
 import 'package:pa_3/api/rest_client.dart';
@@ -352,7 +349,7 @@ class SelectStatus extends StatefulWidget {
 
 class _SelectStatusState extends State<SelectStatus> {
   bool isLoading = false;
-  List<String> options = ["accepted", "packing", "canceled"];
+  List<String> options = ["sent", "receive_by_user", "done"];
   String selected = "";
   @override
   Widget build(BuildContext context) {
