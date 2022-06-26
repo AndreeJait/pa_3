@@ -7,10 +7,11 @@ const routePurchase = "PURCHASES";
 const routeProduct = "PRODUCT";
 const routeHistory = "HISTORY";
 const routeOrder = "PRODUCT_ORDER";
-const routePayment = "PRODUCT_PAYMENT";
+const routePayment = "PURCHASES_PAYMENT";
 const routeShipment = "PRODUCT_SHIPMENT";
 const routeSutar = "PRODUCT_SUTAR";
 const routeMozzataru = "PRODUCT_MOZZATARU";
+const routeOrderForm = "PRODUCT_ORDER_FORM";
 
 var bottomNavigators = [
   BottomNavigatorModel(

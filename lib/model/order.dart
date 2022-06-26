@@ -17,7 +17,12 @@ class Order {
   String proof;
   List<int> quantity;
   String sentOption;
+  @JsonKey(name: "created_at")
+  DateTime? createdAt;
+  @JsonKey(name: "expired_at")
+  DateTime? expiredAt;
   String paymentMethod;
+  String address;
   double total;
   List<String> variant;
   Order(
@@ -30,9 +35,24 @@ class Order {
       required this.stock,
       required this.total,
       required this.user,
+      required this.address,
       required this.variant});
 
   factory Order.fromJson(Map<String, dynamic> json) => _$OrderFromJson(json);
 
   Map<String, dynamic> toJson() => _$OrderToJson(this);
+}
+
+class OrderTemp {
+  ProductStock stock;
+  List<int> quantity;
+  String? sentOption;
+  String? paymentMethod;
+  double total;
+  OrderTemp(
+      {required this.total,
+      required this.quantity,
+      required this.stock,
+      this.paymentMethod,
+      this.sentOption});
 }

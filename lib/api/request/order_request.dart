@@ -20,14 +20,16 @@ class OrderNewRequest {
   List<int> quantity;
   String sentOption;
   String paymentMethod;
-  int total;
+  double total;
   String user;
+  String address;
   String status;
   OrderNewRequest(
       {required this.paymentMethod,
       required this.quantity,
       required this.sentOption,
       required this.status,
+      required this.address,
       required this.stock,
       required this.total,
       required this.user,

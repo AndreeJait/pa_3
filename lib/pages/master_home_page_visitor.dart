@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pa_3/component/bottom_navigator.dart';
 import 'package:pa_3/constans/router_visitor.dart';
 import 'package:pa_3/model/bottom_navigator.dart';
@@ -47,7 +48,40 @@ class _MasterHomePageVisitorState extends State<MasterHomePageVisitor> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-      appBar: AppBar(),
+      appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(50),
+          child: Container(
+            height: 50,
+            padding: const EdgeInsets.symmetric(
+              horizontal: 10,
+            ),
+            color: Colors.indigo[100],
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Wrap(
+                  spacing: 20,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    if (SingelPageRoute.histories.length > 1)
+                      InkWell(
+                        onTap: () {
+                          SingelPageRoute.previous();
+                        },
+                        child: FaIcon(FontAwesomeIcons.arrowLeft),
+                      ),
+                    ClipOval(
+                      child: Image.network(
+                        "https://picsum.photos/250?image=9",
+                        height: 35,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          )),
       body: Container(
         child: view,
       ),

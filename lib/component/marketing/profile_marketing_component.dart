@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:pa_3/constans/general_router_constant.dart';
 import 'package:pa_3/model/user.dart';
-import 'package:pa_3/temporary_model/User.dart';
 import 'package:pa_3/utils/user_utils.dart';
 import 'package:pa_3/utils/view_models.dart';
 

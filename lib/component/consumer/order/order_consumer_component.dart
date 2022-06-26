@@ -1,12 +1,12 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-
-import 'package:pa_3/component/consumer/order/order_form_controller.dart';
+import 'package:intl/intl.dart';
 import 'package:pa_3/constans/router_consumer.dart';
-import 'package:pa_3/temporary_model/Product.dart';
-import 'package:pa_3/temporary_model/User.dart';
-
+import 'package:pa_3/model/order.dart';
+import 'package:pa_3/model/product_stock.dart';
+import 'package:pa_3/utils/view_models.dart';
+import 'package:pa_3/constans/api.dart';
 import 'package:singel_page_route/singel_page_route.dart';
-import 'package:get/get.dart';
 
 class OrderConsumerComponent extends StatefulWidget {
   const OrderConsumerComponent({Key? key}) : super(key: key);
@@ -16,187 +16,278 @@ class OrderConsumerComponent extends StatefulWidget {
 }
 
 class _OrderConsumerComponentState extends State<OrderConsumerComponent> {
-  final OrderController o = Get.put(OrderController());
+  ProductStock selectedStock = ViewModels.getState("selectedStock");
+  final format = NumberFormat.simpleCurrency(locale: "IDR", decimalDigits: 2);
+  List<List<Map<String, String>>> info = [];
+  int selectedIndex = 0;
+  int countIndex = -1;
 
-  get products => null;
+  List<TextEditingController> controllers = [];
 
-  get users => null;
+  @override
+  void initState() {
+    // TODO: implement initState
+
+    selectedStock.product.variant.asMap().forEach((key, value) {
+      controllers.add(TextEditingController());
+      controllers[controllers.length - 1].text = "0";
+      info.add([
+        {"name": "Stock", "value": "${selectedStock.stock[key]}"},
+        {"name": "Weight", "value": "${selectedStock.product.weight}"},
+        {
+          "name": "Expired Date",
+          "value": DateFormat("yyyy-MM-dd").format(selectedStock.outDate)
+        },
+        {
+          "name": "Storage Temperature",
+          "value": "${selectedStock.product.temperatureStorage}"
+        },
+      ]);
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    var index = 0;
-    index = index = o.getIndex(o.variant);
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(vertical: 30),
-      child: Column(
-        children: [
-          Container(
-            alignment: Alignment.centerLeft,
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: subtitle("Address"),
-          ),
-          Container(
-            alignment: Alignment.centerLeft,
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: detailText(users[0].address),
-          ),
-          const Divider(),
-          Container(
-            alignment: Alignment.centerLeft,
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: subtitle("Product"),
-          ),
-          Container(
-            alignment: Alignment.centerLeft,
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: Row(
-              children: [
-                Image.asset(
-                  products[index].imageUrl,
-                  width: MediaQuery.of(context).size.width / 4,
-                  height: MediaQuery.of(context).size.height / 5.5,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    detailText(products[index].name),
-                    detailText('Rp. ${products[index].price.toString()}'),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const Divider(),
-          Container(
-            alignment: Alignment.centerLeft,
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Total Quantity:'),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    IconButton(
-                        onPressed: () {
-                          o.addQuantity();
-                          o.addPrice(products[index].price);
-                        },
-                        icon: const Icon(Icons.add)),
-                    Obx(() => Text(o.quantity.toString())),
-                    IconButton(
-                        onPressed: () {
-                          if (o.quantity <= 1) {
-                            null;
-                          } else {
-                            o.decQuantity();
-                            o.decPrice(products[index].price);
-                          }
-                        },
-                        icon: const Icon(Icons.remove)),
-                  ],
-                )
-              ],
-            ),
-          ),
-          const Divider(),
-          Container(
-            alignment: Alignment.centerLeft,
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                subtitle("Shipment"),
-                TextButton(
-                  style: TextButton.styleFrom(
-                    textStyle: const TextStyle(fontSize: 16),
-                  ),
-                  onPressed: () {
-                    SingelPageRoute.pushName(routeShipment);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.only(top: 20),
+              child: CarouselSlider.builder(
+                  itemCount: selectedStock.product.variant.length,
+                  itemBuilder: (context, index, realIndex) {
+                    final imageList = selectedStock.product.variantImages[
+                        selectedStock.product.variantIndex[index]];
+                    final itemName = selectedStock.product.variant[index];
+                    return buildProductCard(imageList, itemName, index);
                   },
-                  child: Text(o.shipment),
-                ),
-              ],
+                  options: CarouselOptions(
+                    height: MediaQuery.of(context).size.height / 4,
+                    enableInfiniteScroll: false,
+                    enlargeCenterPage: true,
+                    enlargeStrategy: CenterPageEnlargeStrategy.height,
+                    autoPlayInterval: const Duration(seconds: 2),
+                    onPageChanged: (index, reason) {
+                      setState(() {
+                        selectedIndex = index;
+                      });
+                    },
+                  )),
             ),
-          ),
-          const Divider(),
-          Container(
-            alignment: Alignment.centerLeft,
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                detailText("Total Payment"),
-                Obx(() => Text('${o.totalPayment}')),
-              ],
+            Container(
+              margin: const EdgeInsets.only(top: 20),
+              width: double.infinity,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "${selectedStock.product.name} ( ${selectedStock.product.variant[selectedIndex]} )",
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  Text(format.format(
+                      selectedStock.product.priceVariant[selectedIndex]))
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 30),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              ElevatedButton(
-                style: raisedButtonstyle,
-                child: const Text("Back"),
-                onPressed: () {
-                  SingelPageRoute.pushName(routeSutar);
-                },
+            Container(
+              margin: const EdgeInsets.only(top: 20),
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ...info[selectedIndex].map((e) => Wrap(
+                        spacing: 20,
+                        children: [
+                          Container(
+                            width: 150,
+                            child: Text(e["name"]!),
+                          ),
+                          Text(e["value"]!)
+                        ],
+                      ))
+                ],
               ),
-              ElevatedButton(
-                style: raisedButtonstyle,
-                child: const Text("Continue to Payment"),
-                onPressed: () {
-                  SingelPageRoute.pushName(routePayment);
-                },
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 20),
+              child: Column(
+                children: [
+                  ...selectedStock.product.variantIndex
+                      .asMap()
+                      .map((key, value) => MapEntry(
+                          key,
+                          Container(
+                            margin: EdgeInsets.only(top: 20),
+                            child: Row(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: Image.network(
+                                    "$baseUrlConstant/${selectedStock.product.variantImages[value]}",
+                                    width: 80,
+                                    height: 80,
+                                  ),
+                                ),
+                                Expanded(
+                                    child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    ElevatedButton(
+                                        style: ButtonStyle(
+                                            padding: MaterialStateProperty.all(
+                                                const EdgeInsets.symmetric(
+                                                    horizontal: 0,
+                                                    vertical: 0))),
+                                        onPressed: () {
+                                          if (controllers[key].text == "" ||
+                                              controllers[key].text == "0") {
+                                            controllers[key].text = "0";
+                                          } else {
+                                            controllers[key].text =
+                                                "${int.parse(controllers[key].text) - 1}";
+                                          }
+                                        },
+                                        child: Text("-")),
+                                    SizedBox(
+                                      width: 50,
+                                      height: 40,
+                                      child: TextFormField(
+                                        keyboardType: TextInputType.number,
+                                        controller: controllers[key],
+                                        textAlign: TextAlign.center,
+                                        textAlignVertical:
+                                            TextAlignVertical.center,
+                                        decoration: InputDecoration(
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          hintText: '0',
+                                          contentPadding: EdgeInsets.all(0),
+                                          hintStyle: const TextStyle(
+                                              color: Colors.black54),
+                                        ),
+                                      ),
+                                    ),
+                                    ElevatedButton(
+                                        style: ButtonStyle(
+                                            padding: MaterialStateProperty.all(
+                                                const EdgeInsets.symmetric(
+                                                    horizontal: 0,
+                                                    vertical: 0))),
+                                        onPressed: () {
+                                          if (controllers[key].text == "" ||
+                                              controllers[key].text == "0") {
+                                            controllers[key].text = "1";
+                                          } else {
+                                            int current = int.parse(
+                                                controllers[key].text);
+                                            if (current <
+                                                selectedStock.stock[key]) {
+                                              controllers[key].text =
+                                                  "${current + 1}";
+                                            }
+                                          }
+                                        },
+                                        child: Text("+"))
+                                  ],
+                                ))
+                              ],
+                            ),
+                          )))
+                      .values
+                      .toList()
+                ],
               ),
-            ],
-          )
-        ],
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 20),
+              child: ElevatedButton(
+                  onPressed: () {
+                    processOrder();
+                  },
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(
+                          Color.fromARGB(255, 248, 200, 63))),
+                  child: Column(
+                    children: const [
+                      SizedBox(
+                        width: double.infinity,
+                        child: Text(
+                          "Order",
+                          textAlign: TextAlign.center,
+                        ),
+                      )
+                    ],
+                  )),
+            )
+          ],
+        ),
       ),
     );
   }
+
+  void processOrder() {
+    var doProcess = false;
+    controllers.forEach((element) {
+      if (element.text != "0") {
+        doProcess = true;
+      }
+    });
+    if (doProcess) {
+      List<int> quantities = controllers.map((e) => int.parse(e.text)).toList();
+      double total = 0;
+      quantities.asMap().forEach((key, value) {
+        total += value * selectedStock.product.priceVariant[key];
+      });
+      OrderTemp temp =
+          OrderTemp(total: total, quantity: quantities, stock: selectedStock);
+      ViewModels.ctrlState.sink.add([
+        {"name": "orderProcess", "value": temp}
+      ]);
+      SingelPageRoute.pushName(routeOrderForm);
+    }
+  }
+
+  Widget buildProductCard(String urlImage, String itemName, int index) => Card(
+        margin: const EdgeInsets.symmetric(horizontal: 20),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(children: [
+          Padding(
+            padding: const EdgeInsets.all(2.0),
+            child: Image.network(
+              "$baseUrlConstant/$urlImage",
+              width: MediaQuery.of(context).size.width / 4,
+              height: MediaQuery.of(context).size.height / 5.5,
+            ),
+          ),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.indigo[100],
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(8),
+                  bottomRight: Radius.circular(8),
+                ),
+              ),
+              width: double.infinity,
+              height: 20,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(itemName),
+                ],
+              ),
+            ),
+          ),
+        ]),
+      );
 }
-
-final ButtonStyle raisedButtonstyle = ElevatedButton.styleFrom(
-  onPrimary: Colors.white,
-  primary: const Color(0xffF8C83F),
-  shape: const RoundedRectangleBorder(
-    borderRadius: BorderRadius.all(Radius.circular(10)),
-  ),
-);
-
-final ButtonStyle addDecQuantity = ElevatedButton.styleFrom(
-  onPrimary: Colors.white,
-  primary: const Color(0xffF8C83F),
-  shape: const RoundedRectangleBorder(
-    borderRadius: BorderRadius.all(Radius.circular(10)),
-  ),
-);
-
-Widget fullname(text) => Text(
-      text,
-      style: const TextStyle(
-        fontSize: 24,
-        fontWeight: FontWeight.bold,
-        color: Color(0xff585858),
-      ),
-    );
-
-Widget subtitle(text) => Text(
-      text,
-      style: const TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-        color: Color(0xff585858),
-      ),
-    );
-
-Widget detailText(text) => Text(
-      text,
-      style: const TextStyle(
-        fontSize: 15,
-        fontWeight: FontWeight.normal,
-        color: Color(0xff585858),
-      ),
-    );

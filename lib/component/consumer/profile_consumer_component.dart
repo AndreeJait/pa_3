@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:pa_3/constans/general_router_constant.dart';
-import 'package:pa_3/temporary_model/User.dart';
+import 'package:pa_3/model/user.dart';
+import 'package:pa_3/utils/user_utils.dart';
+import 'package:pa_3/utils/view_models.dart';
 
 class ProfileConsumerComponent extends StatefulWidget {
   const ProfileConsumerComponent({Key? key}) : super(key: key);
@@ -12,6 +13,7 @@ class ProfileConsumerComponent extends StatefulWidget {
 }
 
 class _ProfileConsumerComponentState extends State<ProfileConsumerComponent> {
+  User user = ViewModels.getState("user");
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -28,13 +30,16 @@ class _ProfileConsumerComponentState extends State<ProfileConsumerComponent> {
                   ),
                   color: Colors.white,
                 ),
-                child: Image.asset("assets/images/profilebg.png"),
+                child: Image.asset(
+                  "assets/images/profilebg.png",
+                  fit: BoxFit.fitHeight,
+                ),
               ),
               Positioned(
                 child: CircleAvatar(
                   radius: 70,
                   child: Image.asset(
-                    users[0].photo,
+                    "assets/images/profilebg.png",
                   ),
                 ),
               ),
@@ -43,7 +48,7 @@ class _ProfileConsumerComponentState extends State<ProfileConsumerComponent> {
           const SizedBox(
             height: 20,
           ),
-          fullname(users[0].fullname),
+          fullname(user.name),
           const SizedBox(
             height: 10,
           ),
@@ -58,23 +63,18 @@ class _ProfileConsumerComponentState extends State<ProfileConsumerComponent> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                subtitle("Username"),
-                detailText(users[0].username),
-                const SizedBox(
-                  height: 20,
-                ),
                 subtitle("Email"),
-                detailText(users[0].email),
+                detailText(user.email),
                 const SizedBox(
                   height: 20,
                 ),
                 subtitle("Phone"),
-                detailText(users[0].phone),
+                detailText(user.phoneNumber),
                 const SizedBox(
                   height: 20,
                 ),
                 subtitle("Address"),
-                detailText(users[0].address),
+                detailText(user.address),
                 const SizedBox(
                   height: 20,
                 ),
@@ -82,7 +82,9 @@ class _ProfileConsumerComponentState extends State<ProfileConsumerComponent> {
                   style: raisedButtonstyle,
                   child: const Text("Logout"),
                   onPressed: () {
-                    Navigator.pushNamed(context, routeLogin);
+                    setState(() {
+                      logOut(context);
+                    });
                   },
                 ),
               ],

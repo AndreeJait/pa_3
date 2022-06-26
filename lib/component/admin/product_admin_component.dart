@@ -1,12 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:pa_3/api/response/delete_response.dart';
 import 'package:pa_3/api/rest_client.dart';
 import 'package:pa_3/component/admin/ProductContainer/product_card.dart';
 import 'package:pa_3/constans/preferences.dart';
 import 'package:pa_3/constans/router_admin.dart';
-import 'package:pa_3/model/product.dart';
 import 'package:pa_3/model/product_stock.dart';
 import 'package:pa_3/utils/view_models.dart';
 import 'package:shared_preferences/shared_preferences.dart';

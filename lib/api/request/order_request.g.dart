@@ -24,8 +24,9 @@ OrderNewRequest _$OrderNewRequestFromJson(Map<String, dynamic> json) =>
           (json['quantity'] as List<dynamic>).map((e) => e as int).toList(),
       sentOption: json['sentOption'] as String,
       status: json['status'] as String,
+      address: json['address'] as String,
       stock: json['stock'] as String,
-      total: json['total'] as int,
+      total: (json['total'] as num).toDouble(),
       user: json['user'] as String,
       variant:
           (json['variant'] as List<dynamic>).map((e) => e as String).toList(),
@@ -40,6 +41,7 @@ Map<String, dynamic> _$OrderNewRequestToJson(OrderNewRequest instance) =>
       'paymentMethod': instance.paymentMethod,
       'total': instance.total,
       'user': instance.user,
+      'address': instance.address,
       'status': instance.status,
     };
 

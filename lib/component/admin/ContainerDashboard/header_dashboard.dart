@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pa_3/utils/view_models.dart';
 
 class HeaderDashboard extends StatelessWidget {
   const HeaderDashboard({Key? key}) : super(key: key);
@@ -33,11 +34,11 @@ class HeaderDashboard extends StatelessWidget {
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Text("Welcome back"),
+                      children: [
+                        const Text("Welcome back"),
                         Text(
-                          "Admin",
-                          style: TextStyle(
+                          ViewModels.getState("user").role,
+                          style: const TextStyle(
                               fontSize: 20,
                               color: Colors.black,
                               fontWeight: FontWeight.bold),

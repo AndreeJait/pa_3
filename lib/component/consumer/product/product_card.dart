@@ -4,7 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:pa_3/component/admin/ProductContainer/list_detail_product.dart';
 import 'package:pa_3/constans/api.dart';
-import 'package:pa_3/constans/router_admin.dart';
+import 'package:pa_3/constans/router_consumer.dart';
 import 'package:pa_3/model/product_stock.dart';
 import 'package:pa_3/utils/view_models.dart';
 import 'package:singel_page_route/singel_page_route.dart';
@@ -12,9 +12,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class CardProduct extends StatefulWidget {
   ProductStock stock;
-  Function changeVisible;
-  CardProduct({Key? key, required this.stock, required this.changeVisible})
-      : super(key: key);
+  CardProduct({Key? key, required this.stock}) : super(key: key);
 
   @override
   State<CardProduct> createState() => _CardProductState();
@@ -26,16 +24,16 @@ class _CardProductState extends State<CardProduct> {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: BoxDecoration(
           color: Colors.grey[200],
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.4),
               spreadRadius: 1,
               blurRadius: 1,
-              offset: Offset(0, 3), // changes position of shadow
+              offset: const Offset(0, 3), // changes position of shadow
             ),
           ]),
       child: Column(
@@ -106,9 +104,9 @@ class _CardProductState extends State<CardProduct> {
                 ElevatedButton(
                   onPressed: () {
                     ViewModels.ctrlState.sink.add([
-                      {"name": "editStock", "value": widget.stock}
+                      {"name": "selectedStock", "value": widget.stock}
                     ]);
-                    SingelPageRoute.pushName(routeFormProductStock);
+                    SingelPageRoute.pushName(routeOrder);
                   },
                   style: ButtonStyle(
                       backgroundColor:
@@ -117,29 +115,18 @@ class _CardProductState extends State<CardProduct> {
                           RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ))),
-                  child: const FaIcon(
-                    FontAwesomeIcons.penToSquare,
-                    size: 20,
+                  child: Wrap(
+                    spacing: 20,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: const [
+                      FaIcon(
+                        FontAwesomeIcons.moneyBill1Wave,
+                        size: 20,
+                      ),
+                      Text("Order Now")
+                    ],
                   ),
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    ViewModels.ctrlState.sink.add([
-                      {"name": "currentStock", "value": widget.stock}
-                    ]);
-                    widget.changeVisible(true);
-                  },
-                  style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.red),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ))),
-                  child: const FaIcon(
-                    FontAwesomeIcons.trash,
-                    size: 20,
-                  ),
-                )
               ],
             ),
           )

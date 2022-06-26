@@ -21,9 +21,16 @@ Order _$OrderFromJson(Map<String, dynamic> json) => Order(
       user: json['user'] == null
           ? null
           : User.fromJson(json['user'] as Map<String, dynamic>),
+      address: json['address'] as String,
       variant:
           (json['variant'] as List<dynamic>).map((e) => e as String).toList(),
-    );
+    )
+      ..createdAt = json['created_at'] == null
+          ? null
+          : DateTime.parse(json['created_at'] as String)
+      ..expiredAt = json['expired_at'] == null
+          ? null
+          : DateTime.parse(json['expired_at'] as String);
 
 Map<String, dynamic> _$OrderToJson(Order instance) => <String, dynamic>{
       '_id': instance.id,
@@ -33,7 +40,10 @@ Map<String, dynamic> _$OrderToJson(Order instance) => <String, dynamic>{
       'proof': instance.proof,
       'quantity': instance.quantity,
       'sentOption': instance.sentOption,
+      'created_at': instance.createdAt?.toIso8601String(),
+      'expired_at': instance.expiredAt?.toIso8601String(),
       'paymentMethod': instance.paymentMethod,
+      'address': instance.address,
       'total': instance.total,
       'variant': instance.variant,
     };

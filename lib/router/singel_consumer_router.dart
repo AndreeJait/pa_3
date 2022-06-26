@@ -1,8 +1,8 @@
 import 'package:pa_3/component/consumer/history_consumer_component.dart';
 import 'package:pa_3/component/consumer/mozzataru_detail_consumer_component.dart';
+import 'package:pa_3/component/consumer/order/form_order_product.dart';
+import 'package:pa_3/component/consumer/order/form_pembayaran.dart';
 import 'package:pa_3/component/consumer/order/order_consumer_component.dart';
-import 'package:pa_3/component/consumer/order/payment_consumer_component.dart';
-import 'package:pa_3/component/consumer/order/shipment_consumer_component.dart';
 import 'package:pa_3/component/consumer/product_consumer_component.dart';
 import 'package:pa_3/component/consumer/sutar_detail_consumer_component.dart';
 import 'package:pa_3/component/consumer/profile_consumer_component.dart';
@@ -15,8 +15,9 @@ const routes = {
   routeProduct: ProductConsumerComponent(),
   routeHistory: HistoryConsumerComponent(),
   routeOrder: OrderConsumerComponent(),
-  routePayment: PaymentConsumerComponent(),
-  routeShipment: ShipmentConsumerComponent(),
+  routePayment: FormPembayaran(),
+  // routeShipment: ShipmentConsumerComponent(),
+  routeOrderForm: FormOrderProduct(),
   routeSutar: SutarDetailConsumerComponent(),
   routeMozzataru: MozzataruDetailConsumerComponent(),
 };
