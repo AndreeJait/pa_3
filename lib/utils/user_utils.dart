@@ -5,6 +5,7 @@ import 'package:pa_3/api/response/auth_response.dart';
 import 'package:pa_3/constans/general_router_constant.dart';
 import 'package:pa_3/constans/preferences.dart';
 import 'package:pa_3/constans/role.dart';
+import 'package:pa_3/model/order.dart';
 import 'package:pa_3/model/user.dart';
 import 'package:pa_3/utils/view_models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -38,7 +39,8 @@ Future<void> logOut(BuildContext context) async {
   ViewModels.ctrlState.sink.add([
     {"name": "user", "value": null},
     {"name": "token", "value": null},
-    {"name": "refresh", "value": null}
+    {"name": "refresh", "value": null},
+    {"name": "myOrders", "value": <Order>[]},
   ]);
   prefs.remove(prefUser);
   prefs.remove(prefToken);

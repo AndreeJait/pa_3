@@ -29,9 +29,9 @@ class _FormPembayaranState extends State<FormPembayaran> {
   XFile? proof;
   Map<String, String> tutorial = {
     PAYMENT_BAYAR_DITEMPAT:
-        "1.Lorem ipsum dolor sit amet, consectetur adipiscing elit. \n2.Etiam ullamcorper ultrices malesuada. Aliquam erat volutpat. Integer vel dui in erat rutrum porta nec id ligula.\n3. Nunc feugiat, tortor id dignissim semper, erat arcu convallis nulla, a interdum ligula est at ante. Vestibulum viverra ornare pharetra. \n4.Maecenas laoreet, orci vitae viverra tempus, metus neque pretium eros, in finibus elit libero eu sem. Nulla facilisi. Nam pretium urna tempor magna posuere, sed posuere purus scelerisque.",
+        "Metode bayar ditempat:\n 1. Pihak marketing telah sampai di tempat dan produk telah sampai kepada pelanggan\n2. Lakukan pembayaran kepada marketing sesuai nominal pesanan",
     PAYMENT_TRANSFER:
-        "1.Lorem ipsum dolor sit amet, consectetur adipiscing elit. \n2.Etiam ullamcorper ultrices malesuada. Aliquam erat volutpat. Integer vel dui in erat rutrum porta nec id ligula.\n3. Nunc feugiat, tortor id dignissim semper, erat arcu convallis nulla, a interdum ligula est at ante. Vestibulum viverra ornare pharetra. \n4.Maecenas laoreet, orci vitae viverra tempus, metus neque pretium eros, in finibus elit libero eu sem. Nulla facilisi. Nam pretium urna tempor magna posuere, sed posuere purus scelerisque."
+        "Metode pembayara\nVia Atm\n1. Pilih bahasa\n2. Masukkan sandi\n3. Pilih jenis\n transaksi yaitu transfer\n4. Pilih bank tujuan (bank bri) \n5. Masukkan kode bank dan no rekening (002-1234-1234-1324-1235)\n6. Isikan nominal pembayaran \n7. Jika nominal dan tujuan yang ditampilkan benar klik benar"
   };
   final formatCurrency =
       NumberFormat.simpleCurrency(locale: "IDR", decimalDigits: 2);
@@ -244,7 +244,7 @@ class _FormPembayaranState extends State<FormPembayaran> {
           response = await client.changeStatusOrder(OrderStatusRequest(
               id: order.id!, status: "waiting_confirmation"));
         } else {
-          await client.paidOrder(order.id!, File(proof!.path));
+          response = await client.paidOrder(order.id!, File(proof!.path));
         }
 
         List<Order> orders = [...ViewModels.getState("myOrders")];
