@@ -1,9 +1,19 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:pa_3/api/request/order_request.dart';
+import 'package:pa_3/api/rest_client.dart';
 import 'package:pa_3/constans/api.dart';
+import 'package:pa_3/constans/preferences.dart';
+import 'package:pa_3/constans/router_consumer.dart';
 import 'package:pa_3/model/order.dart';
 import 'package:pa_3/utils/view_models.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:singel_page_route/singel_page_route.dart';
 
 class FormPembayaran extends StatefulWidget {
   const FormPembayaran({Key? key}) : super(key: key);
@@ -14,6 +24,9 @@ class FormPembayaran extends StatefulWidget {
 
 class _FormPembayaranState extends State<FormPembayaran> {
   Order order = ViewModels.getState("selectedOrder");
+  bool isLoading = false;
+  final ImagePicker _picker = ImagePicker();
+  XFile? proof;
   Map<String, String> tutorial = {
     PAYMENT_BAYAR_DITEMPAT:
         "1.Lorem ipsum dolor sit amet, consectetur adipiscing elit. \n2.Etiam ullamcorper ultrices malesuada. Aliquam erat volutpat. Integer vel dui in erat rutrum porta nec id ligula.\n3. Nunc feugiat, tortor id dignissim semper, erat arcu convallis nulla, a interdum ligula est at ante. Vestibulum viverra ornare pharetra. \n4.Maecenas laoreet, orci vitae viverra tempus, metus neque pretium eros, in finibus elit libero eu sem. Nulla facilisi. Nam pretium urna tempor magna posuere, sed posuere purus scelerisque.",
@@ -108,44 +121,210 @@ class _FormPembayaranState extends State<FormPembayaran> {
               ),
             ),
           ),
+          if (order.paymentMethod == PAYMENT_TRANSFER)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Bukti Pembayaran",
+                      style: TextStyle(
+                          color: Colors.blue[300], fontWeight: FontWeight.bold),
+                    ),
+                    ElevatedButton(
+                        style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(Colors.white)),
+                        onPressed: () async {
+                          await onUploadButtonClick();
+                        },
+                        child: Wrap(
+                          spacing: 20,
+                          alignment: WrapAlignment.start,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: const [
+                            FaIcon(
+                              FontAwesomeIcons.image,
+                              color: Colors.black,
+                            ),
+                            Text(
+                              "Upload",
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        )),
+                    if (proof != null)
+                      Image.file(
+                        File(proof!.path),
+                        height: 400,
+                      )
+                  ]),
+            ),
           Container(
-            width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
             margin: const EdgeInsets.symmetric(horizontal: 20),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(
-                "Bukti Pembayaran",
-                style: TextStyle(
-                    color: Colors.blue[300], fontWeight: FontWeight.bold),
-              ),
-              Container(
-                child: ElevatedButton(
-                    style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.white)),
-                    onPressed: () {},
-                    child: Wrap(
-                      spacing: 20,
-                      alignment: WrapAlignment.start,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        FaIcon(
-                          FontAwesomeIcons.image,
-                          color: Colors.black,
-                        ),
-                        Text(
-                          "Upload",
-                          style: TextStyle(
-                              color: Colors.black, fontWeight: FontWeight.bold),
-                        )
-                      ],
-                    )),
-              )
-            ]),
+            child: ElevatedButton(
+                onPressed: () async {
+                  if (!isLoading) {
+                    setState(() {
+                      isLoading = true;
+                    });
+                    await processPaid();
+                    setState(() {
+                      isLoading = false;
+                    });
+                  }
+                },
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                      const Color.fromARGB(255, 228, 169, 8)),
+                  padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10)),
+                ),
+                child: isLoading
+                    ? const CircularProgressIndicator()
+                    : Wrap(
+                        spacing: 10,
+                        alignment: WrapAlignment.center,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: const [
+                          FaIcon(FontAwesomeIcons.telegram),
+                          Text("Send"),
+                        ],
+                      )),
           )
         ],
       ),
     );
+  }
+
+  Future<void> processPaid() async {
+    if (proof == null && order.paymentMethod == PAYMENT_TRANSFER) {
+      Widget continueButton = TextButton(
+        child: Text("Ok"),
+        onPressed: () {
+          setState(() {
+            Navigator.of(context).pop();
+          });
+        },
+      );
+      // set up the AlertDialog
+      AlertDialog alert = AlertDialog(
+        title: Text("Pembayaran Gagal"),
+        content: Text("Bukti Pembayaran dibutuhkan."),
+        actions: [
+          continueButton,
+        ],
+      );
+
+      // show the dialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return alert;
+        },
+      );
+    } else {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        String token = prefs.getString(prefToken)!;
+        String refresh = prefs.getString(prefRefresh)!;
+        Dio dio = Dio();
+        dio.options.headers["Authorization"] = "Bearer $token";
+        final client = RestClient(dio);
+
+        var response;
+
+        if (order.paymentMethod == PAYMENT_BAYAR_DITEMPAT) {
+          response = await client.changeStatusOrder(OrderStatusRequest(
+              id: order.id!, status: "waiting_confirmation"));
+        } else {
+          await client.paidOrder(order.id!, File(proof!.path));
+        }
+
+        List<Order> orders = [...ViewModels.getState("myOrders")];
+        var foundIndex = orders.indexWhere((element) => element.id == order.id);
+        if (foundIndex != -1) {
+          orders[foundIndex] = response.data;
+        }
+        ViewModels.ctrlState.sink.add([
+          {"name": "myOrders", "value": orders},
+        ]);
+        Widget continueButton = TextButton(
+          child: Text("Ok"),
+          onPressed: () {
+            setState(() {
+              Navigator.of(context).pop();
+              SingelPageRoute.pushAndReplaceName(routePurchase);
+            });
+          },
+        );
+        // set up the AlertDialog
+        AlertDialog alert = AlertDialog(
+          title: Text("Success to paid"),
+          content: Text("Berhasil melakukan pemesanan"),
+          actions: [
+            continueButton,
+          ],
+        );
+
+        // show the dialog
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return alert;
+          },
+        );
+      } on DioError catch (e) {
+        Widget cancelButton = TextButton(
+          child: Text("Cancel"),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        );
+        Widget continueButton = TextButton(
+          child: Text("Try Again"),
+          onPressed: () async {
+            Navigator.of(context).pop();
+            await processPaid();
+            setState(() {
+              isLoading = false;
+            });
+          },
+        );
+        String message = e.message;
+        // set up the AlertDialog
+        AlertDialog alert = AlertDialog(
+          title: Text("AlertDialog"),
+          content: Text(message),
+          actions: [
+            cancelButton,
+            continueButton,
+          ],
+        );
+
+        // show the dialog
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return alert;
+          },
+        );
+      }
+    }
+  }
+
+  Future<void> onUploadButtonClick() async {
+    XFile? file = await _picker.pickImage(source: ImageSource.gallery);
+    if (file != null) {
+      setState(() {
+        proof = file;
+      });
+    }
   }
 }

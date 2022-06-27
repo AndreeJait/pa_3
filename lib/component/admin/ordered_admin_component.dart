@@ -122,20 +122,22 @@ class _OrderedAdminComponentState extends State<OrderedAdminComponent>
       setState(() {
         tempOrders = current;
       });
-      OrderRequest request = OrderRequest(skip: 20);
+      OrderRequest request = OrderRequest(skip: current.length);
       print(current.length);
       OrderResponse response = await client.getAllOrder(request);
       print(response.data.length);
+      var temp = [...current, ...response.data];
+      temp.sort(((a, b) => b.createdAt!.microsecondsSinceEpoch
+          .compareTo(a.createdAt!.microsecondsSinceEpoch)));
       ViewModels.ctrlState.sink.add([
-        {
-          "name": "allorders",
-          "value": [...current, ...response.data]
-        },
+        {"name": "allorders", "value": temp},
       ]);
     } else {
       try {
         OrderRequest request = OrderRequest();
         OrderResponse response = await client.getAllOrder(request);
+        response.data.sort(((a, b) => b.createdAt!.microsecondsSinceEpoch
+            .compareTo(a.createdAt!.microsecondsSinceEpoch)));
         ViewModels.ctrlState.sink.add([
           {"name": "allorders", "value": response.data},
         ]);

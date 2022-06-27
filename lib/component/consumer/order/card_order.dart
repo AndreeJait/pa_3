@@ -1,28 +1,29 @@
-import 'dart:ffi';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:image_downloader/image_downloader.dart';
 import 'package:intl/intl.dart';
 import 'package:pa_3/api/request/order_request.dart';
 import 'package:pa_3/api/rest_client.dart';
 import 'package:pa_3/constans/api.dart';
 import 'package:pa_3/constans/preferences.dart';
+import 'package:pa_3/constans/router_consumer.dart';
 import 'package:pa_3/model/order.dart';
 import 'package:pa_3/model/product.dart';
 import 'package:pa_3/utils/view_models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:singel_page_route/singel_page_route.dart';
 
-class CardOrder extends StatefulWidget {
+class CardOrderConsumer extends StatefulWidget {
   Order order;
-  CardOrder({Key? key, required this.order}) : super(key: key);
+  CardOrderConsumer({Key? key, required this.order}) : super(key: key);
 
   @override
-  State<CardOrder> createState() => _CardOrderState();
+  State<CardOrderConsumer> createState() => _CardOrderConsumerState();
 }
 
-class _CardOrderState extends State<CardOrder> {
+class _CardOrderConsumerState extends State<CardOrderConsumer> {
+  bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -155,21 +156,61 @@ class _CardOrderState extends State<CardOrder> {
                         },
                         child: const Text("View Detail"),
                       ),
-                      ElevatedButton(
-                        onPressed: () async {
-                          await showDialog(
-                              context: context,
-                              builder: (context) {
-                                return SelectStatus(
-                                  order: widget.order,
-                                );
+                      if (widget.order.status == "unpaid")
+                        ElevatedButton(
+                          onPressed: () async {
+                            ViewModels.ctrlState.sink.add([
+                              {"name": "selectedOrder", "value": widget.order}
+                            ]);
+                            setState(() {
+                              SingelPageRoute.pushAndReplaceName(routePayment);
+                            });
+                          },
+                          child: const Text("Paid Now"),
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  const Color.fromARGB(255, 248, 200, 63))),
+                        ),
+                      if (widget.order.status == "unpaid")
+                        ElevatedButton(
+                          onPressed: () async {
+                            if (!isLoading) {
+                              setState(() {
+                                isLoading = true;
                               });
-                        },
-                        child: const Text("Update Status"),
-                        style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(
-                                const Color.fromARGB(255, 248, 200, 63))),
-                      )
+                              await changeStatusApi("canceled");
+                              setState(() {
+                                isLoading = false;
+                              });
+                            }
+                          },
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  Color.fromARGB(255, 248, 63, 63))),
+                          child: isLoading
+                              ? const CircularProgressIndicator()
+                              : const Text("Cancel"),
+                        ),
+                      if (widget.order.status == "receive_by_user")
+                        ElevatedButton(
+                          onPressed: () async {
+                            if (!isLoading) {
+                              setState(() {
+                                isLoading = true;
+                              });
+                              await changeStatusApi("done");
+                              setState(() {
+                                isLoading = false;
+                              });
+                            }
+                          },
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  const Color.fromARGB(255, 248, 200, 63))),
+                          child: isLoading
+                              ? const CircularProgressIndicator()
+                              : const Text("Pesanan Diterima"),
+                        )
                     ],
                   )
                 : Column(
@@ -190,6 +231,66 @@ class _CardOrderState extends State<CardOrder> {
         ],
       ),
     );
+  }
+
+  Future<void> changeStatusApi(String status) async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String token = prefs.getString(prefToken)!;
+      String refresh = prefs.getString(prefRefresh)!;
+      Dio dio = Dio();
+      dio.options.headers["Authorization"] = "Bearer $token";
+      final client = RestClient(dio);
+      OrderStatusRequest request =
+          OrderStatusRequest(id: widget.order.id!, status: status);
+      print(widget.order.id);
+      var response = await client.changeStatusOrder(request);
+      List<Order> orders = [...ViewModels.getState("myOrders")];
+      int foundIndex =
+          orders.indexWhere((element) => element.id! == response.data.id);
+      orders[foundIndex] = response.data;
+      ViewModels.ctrlState.sink.add([
+        {"name": "myOrders", "value": orders},
+      ]);
+    } on DioError catch (e) {
+      Widget cancelButton = TextButton(
+        child: const Text("Cancel"),
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+      );
+      Widget continueButton = TextButton(
+        child: const Text("Try Again"),
+        onPressed: () async {
+          await changeStatusApi(status);
+          setState(() {
+            isLoading = false;
+          });
+        },
+      );
+      String message = e.message;
+
+      // set up the AlertDialog
+      AlertDialog alert = AlertDialog(
+        title: const Text("AlertDialog"),
+        content: Text(message),
+        actions: [
+          cancelButton,
+          continueButton,
+        ],
+      );
+
+      // show the dialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return alert;
+        },
+      );
+    }
   }
 }
 
@@ -355,145 +456,5 @@ class _DetailOrderState extends State<DetailOrder> {
             ),
           ),
         ));
-  }
-}
-
-class SelectStatus extends StatefulWidget {
-  Order order;
-  SelectStatus({Key? key, required this.order}) : super(key: key);
-
-  @override
-  State<SelectStatus> createState() => _SelectStatusState();
-}
-
-class _SelectStatusState extends State<SelectStatus> {
-  bool isLoading = false;
-  List<String> options = ["accepted", "packing", "canceled"];
-  String selected = "";
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text("Update Status"),
-      content: Wrap(
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ...options.map((e) => Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      Radio(
-                          value: e,
-                          groupValue: selected,
-                          onChanged: (String? value) {
-                            if (!isLoading) {
-                              setState(() {
-                                selected = value!;
-                              });
-                            }
-                          }),
-                      Text(e)
-                    ],
-                  ))
-            ],
-          ),
-          Container(
-            margin: const EdgeInsets.only(top: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                ElevatedButton(
-                  onPressed: () async {
-                    await changeStatusApi();
-                    setState(() {
-                      isLoading = false;
-                    });
-                  },
-                  style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
-                          const Color.fromARGB(255, 248, 200, 63))),
-                  child: isLoading
-                      ? const CircularProgressIndicator()
-                      : const Text("Save Changed"),
-                ),
-                ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(
-                            const Color.fromARGB(255, 248, 63, 63))),
-                    child: const Text("Cancel")),
-              ],
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  Future<void> changeStatusApi() async {
-    setState(() {
-      isLoading = true;
-    });
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      String token = prefs.getString(prefToken)!;
-      String refresh = prefs.getString(prefRefresh)!;
-      Dio dio = Dio();
-      dio.options.headers["Authorization"] = "Bearer $token";
-      final client = RestClient(dio);
-      OrderStatusRequest request =
-          OrderStatusRequest(id: widget.order.id!, status: selected);
-      print(widget.order.id);
-      var response = await client.changeStatusOrder(request);
-      List<Order> orders = [...ViewModels.getState("allorders")];
-      int foundIndex =
-          orders.indexWhere((element) => element.id! == response.data.id);
-      orders[foundIndex] = response.data;
-      ViewModels.ctrlState.sink.add([
-        {"name": "allorders", "value": orders},
-      ]);
-      setState(() {
-        Navigator.of(context).pop();
-      });
-    } on DioError catch (e) {
-      Widget cancelButton = TextButton(
-        child: const Text("Cancel"),
-        onPressed: () {
-          Navigator.of(context).pop();
-        },
-      );
-      Widget continueButton = TextButton(
-        child: const Text("Try Again"),
-        onPressed: () async {
-          Navigator.of(context).pop();
-          await changeStatusApi();
-          setState(() {
-            isLoading = false;
-          });
-        },
-      );
-      String message = e.message;
-
-      // set up the AlertDialog
-      AlertDialog alert = AlertDialog(
-        title: const Text("AlertDialog"),
-        content: Text(message),
-        actions: [
-          cancelButton,
-          continueButton,
-        ],
-      );
-
-      // show the dialog
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return alert;
-        },
-      );
-    }
   }
 }

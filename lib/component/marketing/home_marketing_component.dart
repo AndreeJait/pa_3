@@ -34,10 +34,7 @@ class _HomeMarketingComponentState extends State<HomeMarketingComponent>
   List<String> orderedFilter = [
     "all",
     "packing",
-    "waiting_confirmation",
-    "accepted",
     "waiting_user_confirmation",
-    "unpaid",
     "sent",
     "receive_by_user",
   ];
@@ -62,8 +59,8 @@ class _HomeMarketingComponentState extends State<HomeMarketingComponent>
           tempOrders = event[foundIndex]["value"];
           if (tabController?.index == 0) {
             orders = [
-              ...tempOrders.where((element) =>
-                  element.status != "done" && element.status != "canceled")
+              ...tempOrders
+                  .where((element) => orderedFilter.contains(element.status))
             ];
             dropDownValue = "all";
             spinnerItems = orderedFilter;
@@ -111,6 +108,7 @@ class _HomeMarketingComponentState extends State<HomeMarketingComponent>
 
   Future<void> getOrders() async {
     final prefs = await SharedPreferences.getInstance();
+    await Future.delayed(Duration(seconds: 1));
     String token = prefs.getString(prefToken)!;
     String refresh = prefs.getString(prefRefresh)!;
     Dio dio = Dio();

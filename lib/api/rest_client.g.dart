@@ -181,7 +181,7 @@ class _RestClient implements RestClient {
   }
 
   @override
-  Future<OrderResponse> getMyOrder(request, id) async {
+  Future<OrderResponse> getMyOrder(id, request) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -190,7 +190,7 @@ class _RestClient implements RestClient {
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<OrderResponse>(
             Options(method: 'POST', headers: _headers, extra: _extra)
-                .compose(_dio.options, '/order/{id}',
+                .compose(_dio.options, '/order/${id}',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = OrderResponse.fromJson(_result.data!);
@@ -274,6 +274,26 @@ class _RestClient implements RestClient {
         'proof',
         MultipartFile.fromFileSync(proof.path,
             filename: proof.path.split(Platform.pathSeparator).last)));
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<OrderSingleResponse>(Options(
+                method: 'POST',
+                headers: _headers,
+                extra: _extra,
+                contentType: 'multipart/form-data')
+            .compose(_dio.options, '/order/paid',
+                queryParameters: queryParameters, data: _data)
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = OrderSingleResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<OrderSingleResponse> paidOrderWithoutFile(id) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.fields.add(MapEntry('id', id));
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<OrderSingleResponse>(Options(
                 method: 'POST',

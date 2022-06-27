@@ -55,7 +55,7 @@ abstract class RestClient {
 
   @POST("/order/{id}")
   Future<OrderResponse> getMyOrder(
-      @Body() OrderRequest request, @Part() String id);
+      @Path() String id, @Body() OrderRequest request);
 
   @DELETE("/product/{id}")
   Future<DeleteResponse> deleteProduct(@Path() String id);
@@ -74,6 +74,10 @@ abstract class RestClient {
   @POST("/order/paid")
   @MultiPart()
   Future<OrderSingleResponse> paidOrder(@Part() String id, @Part() File proof);
+
+  @POST("/order/paid")
+  @MultiPart()
+  Future<OrderSingleResponse> paidOrderWithoutFile(@Part() String id);
 
   @POST("/order/create")
   Future<OrderSingleResponse> createAllOrder(@Body() OrderNewRequest request);

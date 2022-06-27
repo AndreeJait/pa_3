@@ -315,6 +315,14 @@ class _DetailOrderState extends State<DetailOrder> {
                               margin: const EdgeInsets.only(top: 10),
                               width: double.infinity,
                               child: Text(
+                                "Alamat : ${widget.order.address}",
+                                style: TextStyle(fontSize: 16),
+                              ),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(top: 10),
+                              width: double.infinity,
+                              child: Text(
                                 "Total must paid : ${format.format(widget.order.total)}",
                                 style: TextStyle(fontSize: 18),
                               ),
