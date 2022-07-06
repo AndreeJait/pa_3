@@ -26,16 +26,16 @@ class _CardProductState extends State<CardProduct> {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: BoxDecoration(
           color: Colors.grey[200],
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.4),
               spreadRadius: 1,
               blurRadius: 1,
-              offset: Offset(0, 3), // changes position of shadow
+              offset: const Offset(0, 3), // changes position of shadow
             ),
           ]),
       child: Column(
@@ -85,15 +85,15 @@ class _CardProductState extends State<CardProduct> {
               value:
                   NumberFormat.simpleCurrency(locale: "IDR", decimalDigits: 2)
                       .format(widget.stock.product.priceVariant[activeIndex]),
-              name: "Price"),
+              name: "Harga"),
           ListDetailProduct(
-              value: widget.stock.stock[activeIndex].toString(), name: "Stock"),
+              value: widget.stock.stock[activeIndex].toString(), name: "Stok"),
           ListDetailProduct(
-              value: widget.stock.product.weight.toString(), name: "Weight"),
+              value: widget.stock.product.weight.toString(), name: "Berat"),
           ListDetailProduct(
               value:
                   "${widget.stock.outDate.day}-${widget.stock.outDate.month}-${widget.stock.outDate.year}",
-              name: "Expired Date"),
+              name: "Tanggal kadaluarsa"),
           Container(
             margin: const EdgeInsets.only(top: 20),
             width: double.infinity,

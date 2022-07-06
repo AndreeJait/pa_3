@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:pa_3/constans/general_router_constant.dart';
 import 'package:pa_3/model/user.dart';
 import 'package:pa_3/utils/user_utils.dart';
 import 'package:pa_3/utils/view_models.dart';
 
 class ProfileAdminComponent extends StatefulWidget {
-  ProfileAdminComponent({Key? key}) : super(key: key);
+  const ProfileAdminComponent({Key? key}) : super(key: key);
 
   @override
   State<ProfileAdminComponent> createState() => _ProfileAdminComponentState();
@@ -71,12 +70,12 @@ class _ProfileAdminComponentState extends State<ProfileAdminComponent> {
                 const SizedBox(
                   height: 20,
                 ),
-                subtitle("Phone"),
+                subtitle("Nomor Telepon"),
                 detailText(user.phoneNumber),
                 const SizedBox(
                   height: 20,
                 ),
-                subtitle("Address"),
+                subtitle("Alamat"),
                 detailText(user.address),
                 const SizedBox(
                   height: 20,

@@ -33,7 +33,7 @@ class _AboutMarketingComponentState extends State<AboutMarketingComponent> {
                     height: 10,
                   ),
                   detailText(
-                      "Marketing is a distributor of Sutar and Mozzataru Milk who will bring flagship products to consumers who have bought our products.")
+                      "Marketing adalah distributor Susu Sutar dan Mozzataru yang akan menghadirkan produk unggulan kepada konsumen yang telah membeli produk kami.")
                 ],
               ),
             ),
@@ -48,29 +48,29 @@ class _AboutMarketingComponentState extends State<AboutMarketingComponent> {
               ),
               child: Column(
                 children: [
-                  title("Marketing Tasks"),
+                  title("Tugas Marketing"),
                   const SizedBox(
                     height: 10,
                   ),
-                  subtitle("“Customer satisfaction is our happiness”"),
+                  subtitle("“Kepuasan pelanggan adalah kebahagiaan kami”"),
                   const SizedBox(
                     height: 20,
                   ),
                   myBulletList(
-                      "Ensure that the product ordered is in accordance with the product to be brought"),
+                      "Pastikan produk yang dipesan sesuai dengan produk yang akan dibawa"),
                   const SizedBox(
                     height: 10,
                   ),
-                  myBulletList("Bringing products safely to consumers"),
+                  myBulletList("Membawa produk dengan aman ke konsumen"),
                   const SizedBox(
                     height: 10,
                   ),
-                  myBulletList("See the expiration date of the product"),
+                  myBulletList("Lihat tanggal kadaluarsa produk"),
                   const SizedBox(
                     height: 10,
                   ),
                   myBulletList(
-                      "Ensuring the product has been accepted into the hands of consumers"),
+                      "Memastikan produk telah diterima ke tangan konsumen"),
                 ],
               ),
             )

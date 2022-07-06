@@ -103,7 +103,7 @@ class _OrderConsumerComponentState extends State<OrderConsumerComponent> {
                   ...info[selectedIndex].map((e) => Wrap(
                         spacing: 20,
                         children: [
-                          Container(
+                          SizedBox(
                             width: 150,
                             child: Text(e["name"]!),
                           ),
@@ -114,7 +114,7 @@ class _OrderConsumerComponentState extends State<OrderConsumerComponent> {
               ),
             ),
             Container(
-              margin: EdgeInsets.only(top: 20),
+              margin: const EdgeInsets.only(top: 20),
               child: Column(
                 children: [
                   ...selectedStock.product.variantIndex
@@ -122,7 +122,7 @@ class _OrderConsumerComponentState extends State<OrderConsumerComponent> {
                       .map((key, value) => MapEntry(
                           key,
                           Container(
-                            margin: EdgeInsets.only(top: 20),
+                            margin: const EdgeInsets.only(top: 20),
                             child: Row(
                               children: [
                                 ClipRRect(
@@ -153,7 +153,7 @@ class _OrderConsumerComponentState extends State<OrderConsumerComponent> {
                                                 "${int.parse(controllers[key].text) - 1}";
                                           }
                                         },
-                                        child: Text("-")),
+                                        child: const Text("-")),
                                     SizedBox(
                                       width: 50,
                                       height: 40,
@@ -169,7 +169,8 @@ class _OrderConsumerComponentState extends State<OrderConsumerComponent> {
                                                 BorderRadius.circular(10),
                                           ),
                                           hintText: '0',
-                                          contentPadding: EdgeInsets.all(0),
+                                          contentPadding:
+                                              const EdgeInsets.all(0),
                                           hintStyle: const TextStyle(
                                               color: Colors.black54),
                                         ),
@@ -195,7 +196,7 @@ class _OrderConsumerComponentState extends State<OrderConsumerComponent> {
                                             }
                                           }
                                         },
-                                        child: Text("+"))
+                                        child: const Text("+"))
                                   ],
                                 ))
                               ],
@@ -207,20 +208,20 @@ class _OrderConsumerComponentState extends State<OrderConsumerComponent> {
               ),
             ),
             Container(
-              margin: EdgeInsets.only(top: 20),
+              margin: const EdgeInsets.only(top: 20),
               child: ElevatedButton(
                   onPressed: () {
                     processOrder();
                   },
                   style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(
-                          Color.fromARGB(255, 248, 200, 63))),
+                          const Color.fromARGB(255, 248, 200, 63))),
                   child: Column(
                     children: const [
                       SizedBox(
                         width: double.infinity,
                         child: Text(
-                          "Order",
+                          "Pesanan",
                           textAlign: TextAlign.center,
                         ),
                       )
@@ -235,11 +236,11 @@ class _OrderConsumerComponentState extends State<OrderConsumerComponent> {
 
   void processOrder() {
     var doProcess = false;
-    controllers.forEach((element) {
+    for (var element in controllers) {
       if (element.text != "0") {
         doProcess = true;
       }
-    });
+    }
     if (doProcess) {
       List<int> quantities = controllers.map((e) => int.parse(e.text)).toList();
       double total = 0;

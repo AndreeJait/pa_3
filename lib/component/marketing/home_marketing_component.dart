@@ -14,7 +14,7 @@ import 'package:pa_3/utils/view_models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeMarketingComponent extends StatefulWidget {
-  HomeMarketingComponent({Key? key}) : super(key: key);
+  const HomeMarketingComponent({Key? key}) : super(key: key);
 
   @override
   State<HomeMarketingComponent> createState() => _HomeMarketingComponentState();
@@ -25,10 +25,10 @@ class _HomeMarketingComponentState extends State<HomeMarketingComponent>
   TabController? tabController;
   List<Tab> tabs = const [
     Tab(
-      text: "Ordered",
+      text: "Pesanan",
     ),
     Tab(
-      text: "History",
+      text: "Riwayat",
     )
   ];
   List<String> orderedFilter = [
@@ -108,7 +108,7 @@ class _HomeMarketingComponentState extends State<HomeMarketingComponent>
 
   Future<void> getOrders() async {
     final prefs = await SharedPreferences.getInstance();
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
     String token = prefs.getString(prefToken)!;
     String refresh = prefs.getString(prefRefresh)!;
     Dio dio = Dio();
@@ -165,7 +165,7 @@ class _HomeMarketingComponentState extends State<HomeMarketingComponent>
                 TabBarCustom(tabController: tabController!, tabs: tabs),
                 Container(
                   width: double.infinity,
-                  margin: EdgeInsets.only(top: 20, bottom: 20),
+                  margin: const EdgeInsets.only(top: 20, bottom: 20),
                   child: DropdownButton<String>(
                     isExpanded: true,
                     value: dropDownValue,
@@ -203,8 +203,8 @@ class _HomeMarketingComponentState extends State<HomeMarketingComponent>
                     },
                     items: [
                       ...spinnerItems.map((e) => DropdownMenuItem(
-                            child: Text(e),
                             value: e,
+                            child: Text(e),
                           ))
                     ],
                   ),

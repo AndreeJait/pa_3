@@ -14,7 +14,7 @@ import 'package:pa_3/utils/view_models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OrderedAdminComponent extends StatefulWidget {
-  OrderedAdminComponent({Key? key}) : super(key: key);
+  const OrderedAdminComponent({Key? key}) : super(key: key);
 
   @override
   State<OrderedAdminComponent> createState() => _OrderedAdminComponentState();
@@ -25,10 +25,10 @@ class _OrderedAdminComponentState extends State<OrderedAdminComponent>
   TabController? tabController;
   List<Tab> tabs = const [
     Tab(
-      text: "Ordered",
+      text: "Pesanan",
     ),
     Tab(
-      text: "History",
+      text: "Riwayat",
     )
   ];
   List<String> orderedFilter = [
@@ -169,7 +169,7 @@ class _OrderedAdminComponentState extends State<OrderedAdminComponent>
                 TabBarCustom(tabController: tabController!, tabs: tabs),
                 Container(
                   width: double.infinity,
-                  margin: EdgeInsets.only(top: 20, bottom: 20),
+                  margin: const EdgeInsets.only(top: 20, bottom: 20),
                   child: DropdownButton<String>(
                     isExpanded: true,
                     value: dropDownValue,
@@ -207,8 +207,8 @@ class _OrderedAdminComponentState extends State<OrderedAdminComponent>
                     },
                     items: [
                       ...spinnerItems.map((e) => DropdownMenuItem(
-                            child: Text(e),
                             value: e,
+                            child: Text(e),
                           ))
                     ],
                   ),

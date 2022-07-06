@@ -14,7 +14,7 @@ import 'package:pa_3/utils/view_models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FormProduct extends StatefulWidget {
-  FormProduct({Key? key}) : super(key: key);
+  const FormProduct({Key? key}) : super(key: key);
 
   @override
   State<FormProduct> createState() => _FormProductState();
@@ -59,7 +59,7 @@ class _FormProductState extends State<FormProduct> {
                         enabled: isEditable,
                         validator: ((value) {
                           if (value!.isEmpty) {
-                            return "Field tidak boleh kosong";
+                            return "Kolom tidak boleh kosong";
                           }
                           return null;
                         }),
@@ -80,7 +80,7 @@ class _FormProductState extends State<FormProduct> {
                         enabled: isEditable,
                         validator: ((value) {
                           if (value!.isEmpty) {
-                            return "Field tidak boleh kosong";
+                            return "Kolom tidak boleh kosong";
                           }
                           return null;
                         }),
@@ -101,7 +101,7 @@ class _FormProductState extends State<FormProduct> {
                         enabled: isEditable,
                         validator: ((value) {
                           if (value!.isEmpty) {
-                            return "Field tidak boleh kosong";
+                            return "Kolom tidak boleh kosong";
                           }
                           return null;
                         }),
@@ -110,7 +110,7 @@ class _FormProductState extends State<FormProduct> {
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          hintText: 'Ex: 27',
+                          hintText: 'Cth: 27',
                           hintStyle: const TextStyle(color: Colors.black54),
                         ),
                       ))),
@@ -122,7 +122,7 @@ class _FormProductState extends State<FormProduct> {
                         enabled: isEditable,
                         validator: ((value) {
                           if (value!.isEmpty) {
-                            return "Field tidak boleh kosong";
+                            return "Kolom tidak boleh kosong";
                           }
                           return null;
                         }),
@@ -131,14 +131,14 @@ class _FormProductState extends State<FormProduct> {
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          hintText: 'Ex: 10',
+                          hintText: 'Cth: 10',
                           hintStyle: const TextStyle(color: Colors.black54),
                         ),
                       ))),
               Container(
                   margin: const EdgeInsets.only(bottom: 10),
                   child: LabelComponent(
-                    label: "Variant",
+                    label: "Variasi",
                     child: Column(
                       children: [
                         Row(
@@ -148,7 +148,7 @@ class _FormProductState extends State<FormProduct> {
                               enabled: isEditable,
                               validator: ((value) {
                                 if (variant.isEmpty) {
-                                  return "Field tidak boleh kosong";
+                                  return "Kolom tidak boleh kosong";
                                 }
                                 return null;
                               }),
@@ -159,7 +159,7 @@ class _FormProductState extends State<FormProduct> {
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                hintText: 'Ex: Original',
+                                hintText: 'Cth: Original',
                                 hintStyle:
                                     const TextStyle(color: Colors.black54),
                               ),
@@ -236,7 +236,7 @@ class _FormProductState extends State<FormProduct> {
                               enabled: isEditable,
                               validator: ((value) {
                                 if (priceVariant.isEmpty) {
-                                  return "Field tidak boleh kosong";
+                                  return "Kolom tidak boleh kosong";
                                 }
                                 return null;
                               }),
@@ -247,7 +247,7 @@ class _FormProductState extends State<FormProduct> {
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                hintText: 'Ex: 10000',
+                                hintText: 'Cth: 10000',
                                 hintStyle:
                                     const TextStyle(color: Colors.black54),
                               ),
@@ -316,12 +316,12 @@ class _FormProductState extends State<FormProduct> {
               Container(
                   margin: const EdgeInsets.only(bottom: 10),
                   child: LabelComponent(
-                      label: "Susunan Gambar Variant (mulai dengan 0)",
+                      label: "Susunan Gambar Variasi (mulai dengan 0)",
                       child: TextFormField(
                         enabled: isEditable,
                         validator: ((value) {
                           if (value!.isEmpty) {
-                            return "Field tidak boleh kosong";
+                            return "Kolom tidak boleh kosong";
                           }
                           return null;
                         }),
@@ -330,14 +330,14 @@ class _FormProductState extends State<FormProduct> {
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          hintText: 'Ex: 0,2,1',
+                          hintText: 'Cth: 0,2,1',
                           hintStyle: const TextStyle(color: Colors.black54),
                         ),
                       ))),
               Container(
                   width: double.infinity,
                   margin: const EdgeInsets.only(bottom: 20),
-                  child: const Text("Variant Image")),
+                  child: const Text("Gambar variasi")),
               Wrap(
                 crossAxisAlignment: WrapCrossAlignment.start,
                 spacing: 10,
@@ -430,7 +430,7 @@ class _FormProductState extends State<FormProduct> {
         {"name": "products", "value": products}
       ]);
       Widget continueButton = TextButton(
-        child: Text("Ok"),
+        child: const Text("Ok"),
         onPressed: () {
           setState(() {
             clearForm();
@@ -440,7 +440,7 @@ class _FormProductState extends State<FormProduct> {
       );
       // set up the AlertDialog
       AlertDialog alert = AlertDialog(
-        title: Text("Success to create"),
+        title: const Text("Success to create"),
         content: Text("Berhasil menambahkan ${response.data.name}"),
         actions: [
           continueButton,
@@ -456,13 +456,13 @@ class _FormProductState extends State<FormProduct> {
       );
     } on DioError catch (e) {
       Widget cancelButton = TextButton(
-        child: Text("Cancel"),
+        child: const Text("Cancel"),
         onPressed: () {
           Navigator.of(context).pop();
         },
       );
       Widget continueButton = TextButton(
-        child: Text("Try Again"),
+        child: const Text("Try Again"),
         onPressed: () async {
           Navigator.of(context).pop();
           await createNewProduct();
@@ -474,12 +474,12 @@ class _FormProductState extends State<FormProduct> {
       );
       String message = e.message;
       if (e.response!.statusCode == 400) {
-        message = "Nama produk sudah ada atau ada field kosong";
+        message = "Nama produk sudah ada atau ada kolom kosong";
       }
 
       // set up the AlertDialog
       AlertDialog alert = AlertDialog(
-        title: Text("AlertDialog"),
+        title: const Text("AlertDialog"),
         content: Text(message),
         actions: [
           cancelButton,

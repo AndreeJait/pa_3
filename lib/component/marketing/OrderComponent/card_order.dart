@@ -121,9 +121,9 @@ class _CardOrderState extends State<CardOrder> {
                                       ),
                                     ),
                                     Text(
-                                        "Quantity : ${widget.order.quantity[key]}"),
+                                        "Jumlah : ${widget.order.quantity[key]}"),
                                     Text(
-                                        "Price : ${(NumberFormat.simpleCurrency(locale: "IDR", decimalDigits: 2).format((widget.order.quantity[key]) * (widget.order.stock[0].product.priceVariant[foundIndex])))}"),
+                                        "Harga : ${(NumberFormat.simpleCurrency(locale: "IDR", decimalDigits: 2).format((widget.order.quantity[key]) * (widget.order.stock[0].product.priceVariant[foundIndex])))}"),
                                   ]),
                             )),
                       ],
@@ -150,7 +150,7 @@ class _CardOrderState extends State<CardOrder> {
                                 return DetailOrder(order: widget.order);
                               });
                         },
-                        child: const Text("View Detail"),
+                        child: const Text("Detail"),
                       ),
                       ElevatedButton(
                         onPressed: () async {
@@ -162,10 +162,10 @@ class _CardOrderState extends State<CardOrder> {
                                 );
                               });
                         },
-                        child: const Text("Update Status"),
                         style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all(
                                 const Color.fromARGB(255, 248, 200, 63))),
+                        child: const Text("Perbarui Status"),
                       )
                     ],
                   )
@@ -180,7 +180,7 @@ class _CardOrderState extends State<CardOrder> {
                                   return DetailOrder(order: widget.order);
                                 });
                           },
-                          child: const Text("View Detail")),
+                          child: const Text("Detail")),
                     ],
                   ),
           )
@@ -206,7 +206,7 @@ class _DetailOrderState extends State<DetailOrder> {
   Widget build(BuildContext context) {
     return Dialog(
         backgroundColor: Colors.transparent,
-        insetPadding: EdgeInsets.all(10),
+        insetPadding: const EdgeInsets.all(10),
         child: SingleChildScrollView(
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
@@ -227,7 +227,7 @@ class _DetailOrderState extends State<DetailOrder> {
                           onTap: () {
                             Navigator.of(context).pop();
                           },
-                          child: FaIcon(FontAwesomeIcons.x),
+                          child: const FaIcon(FontAwesomeIcons.x),
                         ),
                       ],
                     ),
@@ -236,7 +236,7 @@ class _DetailOrderState extends State<DetailOrder> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              margin: EdgeInsets.only(top: 20),
+                              margin: const EdgeInsets.only(top: 20),
                               width: double.infinity,
                               child: Text(
                                 e.product.name,
@@ -253,8 +253,8 @@ class _DetailOrderState extends State<DetailOrder> {
                                   return MapEntry(
                                       key,
                                       Container(
-                                        color:
-                                            Color.fromARGB(255, 231, 243, 255),
+                                        color: const Color.fromARGB(
+                                            255, 231, 243, 255),
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 10, vertical: 5),
                                         child: Row(
@@ -269,16 +269,16 @@ class _DetailOrderState extends State<DetailOrder> {
                                               runSpacing: 10,
                                               children: [
                                                 Text(
-                                                    "Variant $value (${format.format(e.product.priceVariant[foundIndex])})"),
-                                                Container(
+                                                    "Variasi $value (${format.format(e.product.priceVariant[foundIndex])})"),
+                                                SizedBox(
                                                   width: double.infinity,
                                                   child: Text(
-                                                      "Quantity : ${o.quantity[key]}"),
+                                                      "Jumlah : ${o.quantity[key]}"),
                                                 ),
                                                 Text(
                                                     "${o.quantity[key]} x ${format.format(e.product.priceVariant[foundIndex])}"),
                                                 Text(
-                                                    "Total : ${format.format((o.quantity[key] * e.product.priceVariant[foundIndex]))}")
+                                                    "Total Harga : ${format.format((o.quantity[key] * e.product.priceVariant[foundIndex]))}")
                                               ],
                                             ))
                                           ],
@@ -292,7 +292,7 @@ class _DetailOrderState extends State<DetailOrder> {
                               width: double.infinity,
                               child: Text(
                                 "Status : ${widget.order.status}",
-                                style: TextStyle(fontSize: 16),
+                                style: const TextStyle(fontSize: 16),
                               ),
                             ),
                             Container(
@@ -300,7 +300,7 @@ class _DetailOrderState extends State<DetailOrder> {
                               width: double.infinity,
                               child: Text(
                                 "Metode pengemabilan : ${widget.order.sentOption}",
-                                style: TextStyle(fontSize: 16),
+                                style: const TextStyle(fontSize: 16),
                               ),
                             ),
                             Container(
@@ -308,7 +308,7 @@ class _DetailOrderState extends State<DetailOrder> {
                               width: double.infinity,
                               child: Text(
                                 "Metode pembayaran : ${widget.order.paymentMethod}",
-                                style: TextStyle(fontSize: 16),
+                                style: const TextStyle(fontSize: 16),
                               ),
                             ),
                             Container(
@@ -316,20 +316,20 @@ class _DetailOrderState extends State<DetailOrder> {
                               width: double.infinity,
                               child: Text(
                                 "Alamat : ${widget.order.address}",
-                                style: TextStyle(fontSize: 16),
+                                style: const TextStyle(fontSize: 16),
                               ),
                             ),
                             Container(
                               margin: const EdgeInsets.only(top: 10),
                               width: double.infinity,
                               child: Text(
-                                "Total must paid : ${format.format(widget.order.total)}",
-                                style: TextStyle(fontSize: 18),
+                                "Total pembayaran : ${format.format(widget.order.total)}",
+                                style: const TextStyle(fontSize: 18),
                               ),
                             ),
                             if (widget.order.proof.isNotEmpty)
                               Container(
-                                margin: EdgeInsets.only(top: 20),
+                                margin: const EdgeInsets.only(top: 20),
                                 width: double.infinity,
                                 child: Image.network(
                                   "$baseUrlConstant/${widget.order.proof}",
@@ -404,7 +404,7 @@ class _SelectStatusState extends State<SelectStatus> {
                           const Color.fromARGB(255, 248, 200, 63))),
                   child: isLoading
                       ? const CircularProgressIndicator()
-                      : const Text("Save Changed"),
+                      : const Text("Simpan Perubahan"),
                 ),
                 ElevatedButton(
                     onPressed: () {
@@ -413,7 +413,7 @@ class _SelectStatusState extends State<SelectStatus> {
                     style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all(
                             const Color.fromARGB(255, 248, 63, 63))),
-                    child: const Text("Cancel")),
+                    child: const Text("Batal")),
               ],
             ),
           )

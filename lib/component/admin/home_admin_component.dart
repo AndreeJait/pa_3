@@ -54,9 +54,9 @@ class HomeAdminComponent extends StatelessWidget {
                     runSpacing: 10,
                     children: const [
                       Text(
-                          "Don't forget to always Sign Out after you finish using this Administrator facility."),
+                          "Jangan lupa untuk selalu Sign Out setelah selesai menggunakan fasilitas Administrator ini."),
                       Text(
-                          "Get in the habit of regularly Changing the Administrator Password every 1-2 times a month.")
+                          "Biasakan Mengganti Password Administrator secara rutin setiap 1-2 kali dalam sebulan.")
                     ],
                   ),
                 )
@@ -74,7 +74,8 @@ class HomeAdminComponent extends StatelessWidget {
                           horizontal: 20, vertical: 10),
                       decoration: BoxDecoration(
                           color: Colors.grey[300],
-                          borderRadius: BorderRadius.all(Radius.circular(5))),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(5))),
                       child: Wrap(
                         direction: Axis.vertical,
                         crossAxisAlignment: WrapCrossAlignment.center,

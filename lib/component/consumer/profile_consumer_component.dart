@@ -68,12 +68,12 @@ class _ProfileConsumerComponentState extends State<ProfileConsumerComponent> {
                 const SizedBox(
                   height: 20,
                 ),
-                subtitle("Phone"),
+                subtitle("Nomor Telepon"),
                 detailText(user.phoneNumber),
                 const SizedBox(
                   height: 20,
                 ),
-                subtitle("Address"),
+                subtitle("Alamat"),
                 detailText(user.address),
                 const SizedBox(
                   height: 20,

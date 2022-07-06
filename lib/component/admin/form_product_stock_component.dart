@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:ffi';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -15,7 +12,7 @@ import 'package:pa_3/utils/view_models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FormProductStock extends StatefulWidget {
-  FormProductStock({Key? key}) : super(key: key);
+  const FormProductStock({Key? key}) : super(key: key);
 
   @override
   State<FormProductStock> createState() => _FormProductStockState();
@@ -132,7 +129,7 @@ class _FormProductStockState extends State<FormProductStock> {
                               key,
                               Container(
                                 width: double.infinity,
-                                margin: EdgeInsets.only(bottom: 10),
+                                margin: const EdgeInsets.only(bottom: 10),
                                 child: Row(
                                   children: [
                                     ClipRRect(
@@ -143,15 +140,17 @@ class _FormProductStockState extends State<FormProductStock> {
                                       ),
                                     ),
                                     Container(
-                                      margin: EdgeInsets.only(left: 10),
+                                      margin: const EdgeInsets.only(left: 10),
                                       child: Column(
                                         children: [
                                           Text(
                                             selectedProduct.variant[key],
-                                            style: TextStyle(fontSize: 18),
+                                            style:
+                                                const TextStyle(fontSize: 18),
                                           ),
                                           Container(
-                                            margin: EdgeInsets.only(top: 10),
+                                            margin:
+                                                const EdgeInsets.only(top: 10),
                                             child: Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
@@ -196,7 +195,7 @@ class _FormProductStockState extends State<FormProductStock> {
                                                   child: TextFormField(
                                                     validator: (value) {
                                                       if (value!.isEmpty) {
-                                                        return "Stock tidak boleh kosong";
+                                                        return "Stok tidak boleh kosong";
                                                       }
                                                       return null;
                                                     },
@@ -265,7 +264,7 @@ class _FormProductStockState extends State<FormProductStock> {
                 ),
                 Container(
                   width: double.infinity,
-                  margin: EdgeInsets.only(top: 20),
+                  margin: const EdgeInsets.only(top: 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -295,7 +294,7 @@ class _FormProductStockState extends State<FormProductStock> {
                 ),
                 Container(
                   width: double.infinity,
-                  margin: EdgeInsets.only(top: 20, bottom: 20),
+                  margin: const EdgeInsets.only(top: 20, bottom: 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -343,14 +342,14 @@ class _FormProductStockState extends State<FormProductStock> {
                           }
                         },
                         child: isLoading
-                            ? CircularProgressIndicator()
+                            ? const CircularProgressIndicator()
                             : Wrap(
                                 spacing: 20,
                                 crossAxisAlignment: WrapCrossAlignment.center,
                                 children: [
                                   Text(isEditMode
                                       ? "Simpan Perubahan"
-                                      : "Tambahkan Stock"),
+                                      : "Tambahkan Stok"),
                                   !isEditMode
                                       ? const FaIcon(FontAwesomeIcons.plus)
                                       : const FaIcon(FontAwesomeIcons.check)
@@ -389,7 +388,7 @@ class _FormProductStockState extends State<FormProductStock> {
         {"name": "activeProducts", "value": products}
       ]);
       Widget continueButton = TextButton(
-        child: Text("Ok"),
+        child: const Text("Ok"),
         onPressed: () {
           setState(() {
             clearForm();
@@ -399,7 +398,7 @@ class _FormProductStockState extends State<FormProductStock> {
       );
       // set up the AlertDialog
       AlertDialog alert = AlertDialog(
-        title: Text("Success to create"),
+        title: const Text("Success to create"),
         content: Text("Berhasil menambahkan ${response.data.product.name}"),
         actions: [
           continueButton,
@@ -413,13 +412,13 @@ class _FormProductStockState extends State<FormProductStock> {
       );
     } on DioError catch (e) {
       Widget cancelButton = TextButton(
-        child: Text("Cancel"),
+        child: const Text("Batal"),
         onPressed: () {
           Navigator.of(context).pop();
         },
       );
       Widget continueButton = TextButton(
-        child: Text("Try Again"),
+        child: const Text("Coba lagi"),
         onPressed: () async {
           Navigator.of(context).pop();
           await createNewStockProduct();
@@ -430,12 +429,12 @@ class _FormProductStockState extends State<FormProductStock> {
       );
       String message = e.message;
       if (e.response!.statusCode == 400) {
-        message = "Nama produk sudah ada atau ada field kosong";
+        message = "Nama produk sudah ada atau ada kolom kosong";
       }
 
       // set up the AlertDialog
       AlertDialog alert = AlertDialog(
-        title: Text("AlertDialog"),
+        title: const Text("AlertDialog"),
         content: Text(message),
         actions: [
           cancelButton,
@@ -481,7 +480,7 @@ class _FormProductStockState extends State<FormProductStock> {
         {"name": "activeProducts", "value": products}
       ]);
       Widget continueButton = TextButton(
-        child: Text("Ok"),
+        child: const Text("Ok"),
         onPressed: () {
           setState(() {
             Navigator.of(context).pop();
@@ -490,7 +489,7 @@ class _FormProductStockState extends State<FormProductStock> {
       );
       // set up the AlertDialog
       AlertDialog alert = AlertDialog(
-        title: Text("Success to edit"),
+        title: const Text("Success to edit"),
         content:
             Text("Berhasil melakukan perubahan ${response.data.product.name}"),
         actions: [
@@ -505,13 +504,13 @@ class _FormProductStockState extends State<FormProductStock> {
       );
     } on DioError catch (e) {
       Widget cancelButton = TextButton(
-        child: Text("Cancel"),
+        child: const Text("Batal"),
         onPressed: () {
           Navigator.of(context).pop();
         },
       );
       Widget continueButton = TextButton(
-        child: Text("Try Again"),
+        child: const Text("Coba lagi"),
         onPressed: () async {
           Navigator.of(context).pop();
           await updateStock();
@@ -524,7 +523,7 @@ class _FormProductStockState extends State<FormProductStock> {
 
       // set up the AlertDialog
       AlertDialog alert = AlertDialog(
-        title: Text("AlertDialog"),
+        title: const Text("AlertDialog"),
         content: Text(message),
         actions: [
           cancelButton,
@@ -544,9 +543,9 @@ class _FormProductStockState extends State<FormProductStock> {
 
   void clearForm() {
     setState(() {
-      editingControllers.forEach((element) {
+      for (var element in editingControllers) {
         element.text = "";
-      });
+      }
     });
   }
 }

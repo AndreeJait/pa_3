@@ -11,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:singel_page_route/singel_page_route.dart';
 
 class ProductAdminComponent extends StatefulWidget {
-  ProductAdminComponent({Key? key}) : super(key: key);
+  const ProductAdminComponent({Key? key}) : super(key: key);
 
   @override
   State<ProductAdminComponent> createState() => _ProductAdminComponentState();
@@ -155,9 +155,9 @@ class _ProductAdminComponentState extends State<ProductAdminComponent> {
                           alignment: WrapAlignment.center,
                           crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
-                            const Text("Delete Product"),
+                            const Text("Hapus produk"),
                             const Text(
-                                "Are you sure want to remove this product ?"),
+                                "Apakah Anda yakin ingin menghapus produk ini?"),
                             Container(
                               margin: const EdgeInsets.only(top: 20),
                               child: Column(
@@ -202,14 +202,14 @@ class _ProductAdminComponentState extends State<ProductAdminComponent> {
                                         changeVisibleModal(false);
                                       } on DioError catch (e) {
                                         Widget cancelButton = TextButton(
-                                          child: Text("Cancel"),
+                                          child: const Text("Batal"),
                                           onPressed: () {
                                             Navigator.of(context).pop();
                                           },
                                         );
                                         String message = e.message;
                                         AlertDialog alert = AlertDialog(
-                                          title: Text("AlertDialog"),
+                                          title: const Text("AlertDialog"),
                                           content: Text(message),
                                           actions: [
                                             cancelButton,
@@ -240,7 +240,7 @@ class _ProductAdminComponentState extends State<ProductAdminComponent> {
                                         ))),
                                     child: isLoading
                                         ? const CircularProgressIndicator()
-                                        : const Text("Yes"),
+                                        : const Text("Ya"),
                                   ),
                                   ElevatedButton(
                                     onPressed: () {
@@ -256,7 +256,7 @@ class _ProductAdminComponentState extends State<ProductAdminComponent> {
                                           borderRadius:
                                               BorderRadius.circular(18.0),
                                         ))),
-                                    child: const Text("No"),
+                                    child: const Text("Tidak"),
                                   )
                                 ],
                               ),

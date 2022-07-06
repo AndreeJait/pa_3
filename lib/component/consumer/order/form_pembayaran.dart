@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:pa_3/api/request/order_request.dart';
+import 'package:pa_3/api/response/order_response.dart';
 import 'package:pa_3/api/rest_client.dart';
 import 'package:pa_3/constans/api.dart';
 import 'package:pa_3/constans/preferences.dart';
@@ -38,31 +39,31 @@ class _FormPembayaranState extends State<FormPembayaran> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(vertical: 20),
+      padding: const EdgeInsets.symmetric(vertical: 20),
       child: Column(
         children: [
           Container(
             width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: const Text(
               "Pembayran",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
           ),
           Container(
-            margin: EdgeInsets.only(top: 20),
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            margin: const EdgeInsets.only(top: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Total Pembayaran"),
+                const Text("Total Pembayaran"),
                 Text(formatCurrency.format(order.total)),
               ],
             ),
           ),
           Container(
-            margin: EdgeInsets.only(top: 20, bottom: 20),
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            margin: const EdgeInsets.only(top: 20, bottom: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             decoration: const BoxDecoration(
                 border: Border.symmetric(
                     horizontal: BorderSide(
@@ -82,8 +83,8 @@ class _FormPembayaranState extends State<FormPembayaran> {
           ),
           if (order.paymentMethod == PAYMENT_TRANSFER)
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-              margin: EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+              margin: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
                   color: Colors.blue[300],
                   borderRadius: BorderRadius.circular(10)),
@@ -91,17 +92,17 @@ class _FormPembayaranState extends State<FormPembayaran> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: const [
                   Text(
-                    "Via Transfer Bank \n\n1234 - 1234 -1324 - 1235\n\nA.N Nama Pemilik Bak",
+                    "Transfer Bank \n\n1234 - 1234 -1324 - 1235\n\nA.N Nama Pemilik Bak",
                     style: TextStyle(color: Colors.white),
                   ),
                 ],
               ),
             ),
           Container(
-            margin: EdgeInsets.only(top: 20, bottom: 20),
+            margin: const EdgeInsets.only(top: 20, bottom: 20),
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-              margin: EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+              margin: const EdgeInsets.symmetric(horizontal: 20),
               width: double.infinity,
               decoration: BoxDecoration(
                   border: Border.all(color: Colors.blue, width: 1),
@@ -110,7 +111,7 @@ class _FormPembayaranState extends State<FormPembayaran> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    margin: EdgeInsets.only(bottom: 20),
+                    margin: const EdgeInsets.only(bottom: 20),
                     child: const Text(
                       "Cara Pembayaran",
                       style: TextStyle(fontSize: 18),
@@ -151,7 +152,7 @@ class _FormPembayaranState extends State<FormPembayaran> {
                               color: Colors.black,
                             ),
                             Text(
-                              "Upload",
+                              "Unggah",
                               style: TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold),
@@ -194,7 +195,7 @@ class _FormPembayaranState extends State<FormPembayaran> {
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: const [
                           FaIcon(FontAwesomeIcons.telegram),
-                          Text("Send"),
+                          Text("Kirim"),
                         ],
                       )),
           )
@@ -206,7 +207,7 @@ class _FormPembayaranState extends State<FormPembayaran> {
   Future<void> processPaid() async {
     if (proof == null && order.paymentMethod == PAYMENT_TRANSFER) {
       Widget continueButton = TextButton(
-        child: Text("Ok"),
+        child: const Text("Ok"),
         onPressed: () {
           setState(() {
             Navigator.of(context).pop();
@@ -215,8 +216,8 @@ class _FormPembayaranState extends State<FormPembayaran> {
       );
       // set up the AlertDialog
       AlertDialog alert = AlertDialog(
-        title: Text("Pembayaran Gagal"),
-        content: Text("Bukti Pembayaran dibutuhkan."),
+        title: const Text("Pembayaran Gagal"),
+        content: const Text("Bukti Pembayaran dibutuhkan."),
         actions: [
           continueButton,
         ],
@@ -238,7 +239,7 @@ class _FormPembayaranState extends State<FormPembayaran> {
         dio.options.headers["Authorization"] = "Bearer $token";
         final client = RestClient(dio);
 
-        var response;
+        OrderSingleResponse response;
 
         if (order.paymentMethod == PAYMENT_BAYAR_DITEMPAT) {
           response = await client.changeStatusOrder(OrderStatusRequest(
@@ -256,7 +257,7 @@ class _FormPembayaranState extends State<FormPembayaran> {
           {"name": "myOrders", "value": orders},
         ]);
         Widget continueButton = TextButton(
-          child: Text("Ok"),
+          child: const Text("Ok"),
           onPressed: () {
             setState(() {
               Navigator.of(context).pop();
@@ -266,8 +267,8 @@ class _FormPembayaranState extends State<FormPembayaran> {
         );
         // set up the AlertDialog
         AlertDialog alert = AlertDialog(
-          title: Text("Success to paid"),
-          content: Text("Berhasil melakukan pemesanan"),
+          title: const Text("Success to paid"),
+          content: const Text("Berhasil melakukan pemesanan"),
           actions: [
             continueButton,
           ],
@@ -282,13 +283,13 @@ class _FormPembayaranState extends State<FormPembayaran> {
         );
       } on DioError catch (e) {
         Widget cancelButton = TextButton(
-          child: Text("Cancel"),
+          child: const Text("Cancel"),
           onPressed: () {
             Navigator.of(context).pop();
           },
         );
         Widget continueButton = TextButton(
-          child: Text("Try Again"),
+          child: const Text("Coba lagi"),
           onPressed: () async {
             Navigator.of(context).pop();
             await processPaid();
@@ -300,7 +301,7 @@ class _FormPembayaranState extends State<FormPembayaran> {
         String message = e.message;
         // set up the AlertDialog
         AlertDialog alert = AlertDialog(
-          title: Text("AlertDialog"),
+          title: const Text("AlertDialog"),
           content: Text(message),
           actions: [
             cancelButton,

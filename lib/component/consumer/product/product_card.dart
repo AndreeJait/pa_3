@@ -83,15 +83,15 @@ class _CardProductState extends State<CardProduct> {
               value:
                   NumberFormat.simpleCurrency(locale: "IDR", decimalDigits: 2)
                       .format(widget.stock.product.priceVariant[activeIndex]),
-              name: "Price"),
+              name: "Harga"),
           ListDetailProduct(
-              value: widget.stock.stock[activeIndex].toString(), name: "Stock"),
+              value: widget.stock.stock[activeIndex].toString(), name: "Stok"),
           ListDetailProduct(
-              value: widget.stock.product.weight.toString(), name: "Weight"),
+              value: widget.stock.product.weight.toString(), name: "Berat"),
           ListDetailProduct(
               value:
                   "${widget.stock.outDate.day}-${widget.stock.outDate.month}-${widget.stock.outDate.year}",
-              name: "Expired Date"),
+              name: "Tanggal kadaluarsa"),
           Container(
             margin: const EdgeInsets.only(top: 20),
             width: double.infinity,
@@ -123,7 +123,7 @@ class _CardProductState extends State<CardProduct> {
                         FontAwesomeIcons.moneyBill1Wave,
                         size: 20,
                       ),
-                      Text("Order Now")
+                      Text("Pesan Sekarang")
                     ],
                   ),
                 ),

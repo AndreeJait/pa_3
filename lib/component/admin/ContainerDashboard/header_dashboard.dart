@@ -35,7 +35,7 @@ class HeaderDashboard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text("Welcome back"),
+                        const Text("Selamat Datang"),
                         Text(
                           ViewModels.getState("user").role,
                           style: const TextStyle(
