@@ -10,6 +10,7 @@ import 'package:pa_3/constans/api.dart';
 import 'package:pa_3/constans/preferences.dart';
 import 'package:pa_3/constans/router_consumer.dart';
 import 'package:pa_3/model/order.dart';
+import 'package:pa_3/model/user.dart';
 import 'package:pa_3/utils/view_models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:singel_page_route/singel_page_route.dart';
@@ -22,6 +23,7 @@ class FormOrderProduct extends StatefulWidget {
 }
 
 class _FormOrderProductState extends State<FormOrderProduct> {
+  User user = ViewModels.getState("user");
   OrderTemp orderTemp = ViewModels.getState("orderProcess");
   String sentOption = SENT_AMBIL_DITEMPAT;
   String paymentMethod = PAYMENT_TRANSFER;
@@ -78,7 +80,7 @@ class _FormOrderProductState extends State<FormOrderProduct> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(vertical: 20),
+      padding: const EdgeInsets.symmetric(vertical: 20),
       child: Column(
         children: [
           Container(
@@ -175,7 +177,7 @@ class _FormOrderProductState extends State<FormOrderProduct> {
                       showDialog(
                           context: context,
                           builder: (context) {
-                            return SentOptional();
+                            return const SentOptional();
                           });
                     }
                   },
@@ -208,7 +210,7 @@ class _FormOrderProductState extends State<FormOrderProduct> {
                       showDialog(
                           context: context,
                           builder: (context) {
-                            return PaymentOption();
+                            return const PaymentOption();
                           });
                     }
                   },
@@ -230,13 +232,14 @@ class _FormOrderProductState extends State<FormOrderProduct> {
                 keyboardType: TextInputType.multiline,
                 maxLines: null,
                 textAlignVertical: TextAlignVertical.center,
+                initialValue: user.address,
                 decoration: const InputDecoration(
                   // border: OutlineInputBorder(
                   //   borderRadius: BorderRadius.circular(10),
                   // ),
                   hintText: 'Masukkan alamat disini',
                   contentPadding: EdgeInsets.symmetric(vertical: 10),
-                  hintStyle: const TextStyle(color: Colors.black54),
+                  hintStyle: TextStyle(color: Colors.black54),
                 ),
               ),
             ),
@@ -254,7 +257,7 @@ class _FormOrderProductState extends State<FormOrderProduct> {
                 buildInfoBottom(
                     "Total Pembayaran",
                     formatCurrency.format(orderTemp.total + additional),
-                    TextStyle(fontWeight: FontWeight.bold))
+                    const TextStyle(fontWeight: FontWeight.bold))
               ],
             ),
           ),
@@ -275,7 +278,7 @@ class _FormOrderProductState extends State<FormOrderProduct> {
                   });
                 }
               },
-              child: Container(
+              child: SizedBox(
                 width: MediaQuery.of(context).size.width / 2,
                 child: Column(
                   children: [
@@ -293,7 +296,7 @@ class _FormOrderProductState extends State<FormOrderProduct> {
   Future<void> processOrder() async {
     if (sentOption == SENT_DIKIRIM && controllerAddress.text == "") {
       Widget continueButton = TextButton(
-        child: Text("Ok"),
+        child: const Text("Ok"),
         onPressed: () {
           setState(() {
             Navigator.of(context).pop();
@@ -302,8 +305,8 @@ class _FormOrderProductState extends State<FormOrderProduct> {
       );
       // set up the AlertDialog
       AlertDialog alert = AlertDialog(
-        title: Text("Alamat kosong"),
-        content: Text("Alamat tidak boleh kosong"),
+        title: const Text("Alamat kosong"),
+        content: const Text("Alamat tidak boleh kosong"),
         actions: [
           continueButton,
         ],
@@ -354,7 +357,7 @@ class _FormOrderProductState extends State<FormOrderProduct> {
         ]);
 
         Widget continueButton = TextButton(
-          child: Text("Ok"),
+          child: const Text("Ok"),
           onPressed: () {
             setState(() {
               Navigator.of(context).pop();
@@ -364,8 +367,8 @@ class _FormOrderProductState extends State<FormOrderProduct> {
         );
         // set up the AlertDialog
         AlertDialog alert = AlertDialog(
-          title: Text("Success to order"),
-          content: Text("Berhasil membuat pesanan segera bayar"),
+          title: const Text("Success to order"),
+          content: const Text("Berhasil membuat pesanan segera bayar"),
           actions: [
             continueButton,
           ],
@@ -380,13 +383,13 @@ class _FormOrderProductState extends State<FormOrderProduct> {
         );
       } on DioError catch (e) {
         Widget cancelButton = TextButton(
-          child: Text("Cancel"),
+          child: const Text("Cancel"),
           onPressed: () {
             Navigator.of(context).pop();
           },
         );
         Widget continueButton = TextButton(
-          child: Text("Try Again"),
+          child: const Text("Try Again"),
           onPressed: () async {
             Navigator.of(context).pop();
             await processOrder();
@@ -399,7 +402,7 @@ class _FormOrderProductState extends State<FormOrderProduct> {
         String message = e.message;
         // set up the AlertDialog
         AlertDialog alert = AlertDialog(
-          title: Text("AlertDialog"),
+          title: const Text("AlertDialog"),
           content: Text(message),
           actions: [
             cancelButton,
@@ -435,7 +438,7 @@ class _FormOrderProductState extends State<FormOrderProduct> {
 }
 
 class SentOptional extends StatefulWidget {
-  SentOptional({Key? key}) : super(key: key);
+  const SentOptional({Key? key}) : super(key: key);
 
   @override
   State<SentOptional> createState() => _SentOptionalState();
@@ -514,7 +517,7 @@ class _SentOptionalState extends State<SentOptional> {
 }
 
 class PaymentOption extends StatefulWidget {
-  PaymentOption({Key? key}) : super(key: key);
+  const PaymentOption({Key? key}) : super(key: key);
 
   @override
   State<PaymentOption> createState() => _PaymentOptionState();
