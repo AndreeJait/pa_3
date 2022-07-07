@@ -415,9 +415,13 @@ class _FormProductState extends State<FormProduct> {
       priceVariantString = [...priceVariant.map((e) => e.toString())];
       print(priceVariant[0]);
       print(indexVariant[0]);
+      String productName = nameController.text
+          .split(" ")
+          .map((str) => str.toUpperCase())
+          .join(" ");
       ProductSingleResponse response = await client.createProduct(
           variantImage,
-          nameController.text,
+          productName,
           int.parse(productDurableController.text),
           int.parse(weightController.text),
           int.parse(temperatureStorageController.text),
